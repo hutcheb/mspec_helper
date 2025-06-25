@@ -1,0 +1,164 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>com.yourorg.mspec.language-support</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>MSpec Language Support</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor email="support@yourorg.com" url="https://www.yourorg.com">Your Organization</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside this element.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description><![CDATA[
+    Language support for PLC4X MSpec files in IntelliJ IDEA and other JetBrains IDEs.
+    
+    Features:
+    • Syntax highlighting for MSpec files
+    • Code completion and auto-completion
+    • Error detection and validation
+    • Go to definition and find usages
+    • Code formatting and structure view
+    • Integration with MSpec Language Server Protocol
+    
+    MSpec is a domain-specific language used by Apache PLC4X to define protocol message structures 
+    for industrial communication protocols.
+  ]]></description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- File Type -->
+        <fileType 
+            name="MSpec File" 
+            implementationClass="com.yourorg.mspec.MSpecFileType" 
+            fieldName="INSTANCE" 
+            language="MSpec" 
+            extensions="mspec"/>
+
+        <!-- Language -->
+        <lang.parserDefinition 
+            language="MSpec" 
+            implementationClass="com.yourorg.mspec.parser.MSpecParserDefinition"/>
+
+        <!-- Syntax Highlighter -->
+        <lang.syntaxHighlighterFactory 
+            language="MSpec" 
+            implementationClass="com.yourorg.mspec.highlighting.MSpecSyntaxHighlighterFactory"/>
+
+        <!-- Color Settings -->
+        <colorSettingsPage 
+            implementation="com.yourorg.mspec.highlighting.MSpecColorSettingsPage"/>
+
+        <!-- Commenter -->
+        <lang.commenter 
+            language="MSpec" 
+            implementationClass="com.yourorg.mspec.MSpecCommenter"/>
+
+        <!-- Bracket Matcher -->
+        <lang.bracketMatcher 
+            language="MSpec" 
+            implementationClass="com.yourorg.mspec.MSpecBracketMatcher"/>
+
+        <!-- Code Folding -->
+        <lang.foldingBuilder 
+            language="MSpec" 
+            implementationClass="com.yourorg.mspec.folding.MSpecFoldingBuilder"/>
+
+        <!-- Structure View -->
+        <lang.psiStructureViewFactory 
+            language="MSpec" 
+            implementationClass="com.yourorg.mspec.structure.MSpecStructureViewFactory"/>
+
+        <!-- Completion Contributor -->
+        <completion.contributor 
+            language="MSpec" 
+            implementationClass="com.yourorg.mspec.completion.MSpecCompletionContributor"/>
+
+        <!-- Annotator for error highlighting -->
+        <annotator 
+            language="MSpec" 
+            implementationClass="com.yourorg.mspec.annotator.MSpecAnnotator"/>
+
+        <!-- Language Server Protocol Support -->
+        <platform.lsp.serverSupportProvider 
+            implementation="com.yourorg.mspec.lsp.MSpecLspServerSupportProvider"/>
+
+        <!-- Live Templates -->
+        <defaultLiveTemplates file="/liveTemplates/MSpec.xml"/>
+        <liveTemplateContext implementation="com.yourorg.mspec.templates.MSpecTemplateContextType"/>
+
+        <!-- Inspections -->
+        <localInspection 
+            language="MSpec" 
+            shortName="MSpecUnusedType" 
+            displayName="Unused type definition" 
+            groupName="MSpec" 
+            enabledByDefault="true" 
+            level="WARNING" 
+            implementationClass="com.yourorg.mspec.inspections.MSpecUnusedTypeInspection"/>
+
+        <localInspection 
+            language="MSpec" 
+            shortName="MSpecUndefinedType" 
+            displayName="Undefined type reference" 
+            groupName="MSpec" 
+            enabledByDefault="true" 
+            level="ERROR" 
+            implementationClass="com.yourorg.mspec.inspections.MSpecUndefinedTypeInspection"/>
+
+        <!-- Formatter -->
+        <lang.formatter 
+            language="MSpec" 
+            implementationClass="com.yourorg.mspec.formatting.MSpecFormattingModelBuilder"/>
+
+        <!-- Code Style Settings -->
+        <codeStyleSettingsProvider 
+            implementation="com.yourorg.mspec.formatting.MSpecCodeStyleSettingsProvider"/>
+
+        <langCodeStyleSettingsProvider 
+            implementation="com.yourorg.mspec.formatting.MSpecLanguageCodeStyleSettingsProvider"/>
+
+        <!-- Find Usages -->
+        <lang.findUsagesProvider 
+            language="MSpec" 
+            implementationClass="com.yourorg.mspec.findUsages.MSpecFindUsagesProvider"/>
+
+        <!-- Reference Contributor -->
+        <psi.referenceContributor 
+            implementation="com.yourorg.mspec.references.MSpecReferenceContributor"/>
+
+        <!-- Documentation Provider -->
+        <lang.documentationProvider 
+            language="MSpec" 
+            implementationClass="com.yourorg.mspec.documentation.MSpecDocumentationProvider"/>
+
+        <!-- Spell Checker -->
+        <spellchecker.support 
+            language="MSpec" 
+            implementationClass="com.yourorg.mspec.spellchecker.MSpecSpellcheckingStrategy"/>
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="MSpec.NewFile" 
+                class="com.yourorg.mspec.actions.CreateMSpecFileAction" 
+                text="MSpec File" 
+                description="Create new MSpec file">
+            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
+        </action>
+    </actions>
+
+    <applicationListeners>
+        <listener class="com.yourorg.mspec.lsp.MSpecLspServerLifecycleListener"
+                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
+    </applicationListeners>
+</idea-plugin>

@@ -1,0 +1,51 @@
+{
+  "recommendations": [
+    // TypeScript and JavaScript
+    "ms-vscode.vscode-typescript-next",
+    
+    // Linting and formatting
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    
+    // Testing
+    "orta.vscode-jest",
+    
+    // Git
+    "eamodio.gitlens",
+    
+    // Markdown
+    "yzhang.markdown-all-in-one",
+    "davidanson.vscode-markdownlint",
+    
+    // JSON
+    "ms-vscode.vscode-json",
+    
+    // YAML
+    "redhat.vscode-yaml",
+    
+    // Extension development
+    "ms-vscode.extension-test-runner",
+    
+    // Kotlin (for JetBrains plugin development)
+    "fwcd.kotlin",
+    
+    // Gradle
+    "vscjava.vscode-gradle",
+    
+    // Docker (if needed)
+    "ms-azuretools.vscode-docker",
+    
+    // GitHub
+    "github.vscode-pull-request-github",
+    "github.copilot",
+    
+    // Utilities
+    "ms-vscode.vscode-npm-script",
+    "christian-kohler.path-intellisense",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-json5"
+  ],
+  "unwantedRecommendations": [
+    "ms-vscode.vscode-typescript"
+  ]
+}

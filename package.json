@@ -1,0 +1,71 @@
+{
+  "name": "mspec-lsp-workspace",
+  "version": "1.0.0",
+  "description": "Language Server Protocol implementation for PLC4X MSpec files",
+  "private": true,
+  "workspaces": [
+    "server",
+    "vscode-extension",
+    "shared"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "clean": "npm run clean --workspaces --if-present",
+    "lint": "eslint . --ext .ts,.js --fix",
+    "lint:check": "eslint . --ext .ts,.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "dev": "npm run dev --workspace=server",
+    "dev:server": "npm run watch --workspace=server",
+    "dev:extension": "npm run watch --workspace=vscode-extension",
+    "package:vscode": "npm run package --workspace=vscode-extension",
+    "package:jetbrains": "cd jetbrains-plugin && ./gradlew buildPlugin",
+    "install:all": "npm install --workspaces",
+    "postinstall": "npm run build",
+    "prepare": "husky install || true"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^14.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/mspec-lsp.git"
+  },
+  "keywords": [
+    "language-server",
+    "lsp",
+    "mspec",
+    "plc4x",
+    "vscode",
+    "jetbrains"
+  ],
+  "author": "Your Name",
+  "license": "Apache-2.0",
+  "lint-staged": {
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run test"
+    }
+  }
+}

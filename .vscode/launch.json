@@ -1,0 +1,136 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/vscode-extension"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/vscode-extension/out/**/*.js"
+      ],
+      "preLaunchTask": "npm: compile - vscode-extension"
+    },
+    {
+      "name": "Launch Extension (Debug Server)",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/vscode-extension"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/vscode-extension/out/**/*.js"
+      ],
+      "preLaunchTask": "npm: compile - vscode-extension",
+      "env": {
+        "MSPEC_DEBUG": "true"
+      }
+    },
+    {
+      "name": "Attach to Language Server",
+      "type": "node",
+      "request": "attach",
+      "port": 6009,
+      "restart": true,
+      "outFiles": [
+        "${workspaceFolder}/server/out/**/*.js"
+      ]
+    },
+    {
+      "name": "Launch Language Server",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/out/server.js",
+      "args": [
+        "--stdio"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/server/out/**/*.js"
+      ],
+      "preLaunchTask": "npm: build - server"
+    },
+    {
+      "name": "Debug Language Server",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/out/server.js",
+      "args": [
+        "--stdio"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/server/out/**/*.js"
+      ],
+      "preLaunchTask": "npm: build - server",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Run Server Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [
+        "--runInBand",
+        "--no-cache",
+        "--no-coverage"
+      ],
+      "cwd": "${workspaceFolder}/server",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "NODE_ENV": "test"
+      }
+    },
+    {
+      "name": "Debug Server Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [
+        "--runInBand",
+        "--no-cache",
+        "--no-coverage",
+        "--testNamePattern=${input:testNamePattern}"
+      ],
+      "cwd": "${workspaceFolder}/server",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "NODE_ENV": "test"
+      }
+    },
+    {
+      "name": "Extension Tests",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/vscode-extension",
+        "--extensionTestsPath=${workspaceFolder}/vscode-extension/out/test/suite/index"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/vscode-extension/out/test/**/*.js"
+      ],
+      "preLaunchTask": "npm: pretest - vscode-extension"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Launch Extension + Attach to Server",
+      "configurations": [
+        "Launch Extension (Debug Server)",
+        "Attach to Language Server"
+      ],
+      "stopAll": true
+    }
+  ],
+  "inputs": [
+    {
+      "id": "testNamePattern",
+      "description": "Test name pattern",
+      "default": "",
+      "type": "promptString"
+    }
+  ]
+}

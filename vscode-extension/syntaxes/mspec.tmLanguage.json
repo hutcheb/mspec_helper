@@ -1,0 +1,185 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "MSpec",
+  "scopeName": "source.mspec",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#type-definitions"
+    },
+    {
+      "include": "#field-definitions"
+    },
+    {
+      "include": "#expressions"
+    },
+    {
+      "include": "#literals"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#brackets"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.mspec",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.mspec",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "type-definitions": {
+      "patterns": [
+        {
+          "name": "keyword.control.type.mspec",
+          "match": "\\b(type|discriminatedType|enum|dataIo)\\b"
+        },
+        {
+          "name": "entity.name.type.mspec",
+          "match": "(?<=\\b(?:type|discriminatedType|enum|dataIo)\\s+)[A-Za-z][A-Za-z0-9_]*"
+        }
+      ]
+    },
+    "field-definitions": {
+      "patterns": [
+        {
+          "name": "keyword.control.field.mspec",
+          "match": "\\b(simple|array|const|reserved|optional|discriminator|implicit|virtual|manual|manualArray|checksum|padding|assert|validation|peek|unknown|abstract|typeSwitch)\\b"
+        },
+        {
+          "name": "keyword.control.loop.mspec",
+          "match": "\\b(count|length|terminated)\\b"
+        }
+      ]
+    },
+    "data-types": {
+      "patterns": [
+        {
+          "name": "storage.type.primitive.mspec",
+          "match": "\\b(bit|byte|int|uint|vint|vuint|float|ufloat|string|vstring|time|date|dateTime)\\b"
+        }
+      ]
+    },
+    "literals": {
+      "patterns": [
+        {
+          "name": "constant.numeric.hex.mspec",
+          "match": "0[xX][0-9a-fA-F]+"
+        },
+        {
+          "name": "constant.numeric.decimal.mspec",
+          "match": "\\b\\d+(\\.\\d+)?\\b"
+        },
+        {
+          "name": "constant.language.boolean.mspec",
+          "match": "\\b(true|false)\\b"
+        },
+        {
+          "name": "string.quoted.double.mspec",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.mspec",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.mspec",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.mspec",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "expressions": {
+      "patterns": [
+        {
+          "name": "variable.other.mspec",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+        },
+        {
+          "name": "entity.name.function.mspec",
+          "match": "\\b[A-Z_][A-Z0-9_]*(?=\\s*\\()"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.arithmetic.mspec",
+          "match": "[+\\-*/^%]"
+        },
+        {
+          "name": "keyword.operator.comparison.mspec",
+          "match": "(==|!=|>=|<=|>|<)"
+        },
+        {
+          "name": "keyword.operator.logical.mspec",
+          "match": "(&&|\\|\\||!)"
+        },
+        {
+          "name": "keyword.operator.bitwise.mspec",
+          "match": "(&|\\||>>|<<)"
+        },
+        {
+          "name": "keyword.operator.assignment.mspec",
+          "match": "="
+        },
+        {
+          "name": "keyword.operator.ternary.mspec",
+          "match": "[?:]"
+        }
+      ]
+    },
+    "brackets": {
+      "patterns": [
+        {
+          "name": "punctuation.definition.bracket.square.mspec",
+          "match": "[\\[\\]]"
+        },
+        {
+          "name": "punctuation.definition.bracket.round.mspec",
+          "match": "[\\(\\)]"
+        },
+        {
+          "name": "punctuation.definition.bracket.curly.mspec",
+          "match": "[\\{\\}]"
+        },
+        {
+          "name": "punctuation.separator.comma.mspec",
+          "match": ","
+        },
+        {
+          "name": "punctuation.accessor.dot.mspec",
+          "match": "\\."
+        }
+      ]
+    },
+    "attributes": {
+      "patterns": [
+        {
+          "name": "entity.other.attribute-name.mspec",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*(?=\\s*=)"
+        }
+      ]
+    }
+  }
+}

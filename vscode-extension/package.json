@@ -1,0 +1,174 @@
+{
+  "name": "mspec-language-support",
+  "displayName": "MSpec Language Support",
+  "description": "Language support for PLC4X MSpec files",
+  "version": "1.0.0",
+  "publisher": "your-publisher",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Formatters"
+  ],
+  "keywords": [
+    "mspec",
+    "plc4x",
+    "protocol",
+    "industrial",
+    "automation"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "mspec",
+        "aliases": [
+          "MSpec",
+          "mspec"
+        ],
+        "extensions": [
+          ".mspec"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/mspec-light.svg",
+          "dark": "./icons/mspec-dark.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "mspec",
+        "scopeName": "source.mspec",
+        "path": "./syntaxes/mspec.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "MSpec Language Server",
+      "properties": {
+        "mspec.validation.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable validation"
+        },
+        "mspec.validation.strictMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable strict validation mode"
+        },
+        "mspec.completion.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable auto-completion"
+        },
+        "mspec.completion.snippets": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable code snippets"
+        },
+        "mspec.formatting.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable document formatting"
+        },
+        "mspec.formatting.indentSize": {
+          "type": "number",
+          "default": 4,
+          "description": "Number of spaces for indentation"
+        },
+        "mspec.server.path": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the MSpec language server executable"
+        },
+        "mspec.server.args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Arguments to pass to the language server"
+        },
+        "mspec.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VS Code and the language server"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "mspec.restartServer",
+        "title": "Restart MSpec Language Server",
+        "category": "MSpec"
+      },
+      {
+        "command": "mspec.showOutputChannel",
+        "title": "Show MSpec Output",
+        "category": "MSpec"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "mspec.restartServer",
+          "when": "editorLangId == mspec"
+        },
+        {
+          "command": "mspec.showOutputChannel",
+          "when": "editorLangId == mspec"
+        }
+      ]
+    },
+    "snippets": [
+      {
+        "language": "mspec",
+        "path": "./snippets/mspec.json"
+      }
+    ]
+  },
+  "activationEvents": [
+    "onLanguage:mspec"
+  ],
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "build": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "lint": "eslint src --ext ts",
+    "test": "echo 'VSCode extension tests not implemented yet'",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.75.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "@vscode/test-electron": "^2.3.0",
+    "@vscode/vsce": "^2.19.0",
+    "eslint": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/mspec-lsp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/mspec-lsp/issues"
+  },
+  "homepage": "https://github.com/your-org/mspec-lsp#readme",
+  "license": "Apache-2.0"
+}

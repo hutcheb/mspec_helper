@@ -1,0 +1,168 @@
+{
+  "Type Definition": {
+    "prefix": "type",
+    "body": [
+      "[type ${1:TypeName}${2:(${3:parameters})} ${4:attributes}",
+      "    [simple ${5:dataType} ${6:fieldName}]",
+      "]"
+    ],
+    "description": "Create a new type definition"
+  },
+  "Discriminated Type Definition": {
+    "prefix": "discriminatedType",
+    "body": [
+      "[discriminatedType ${1:TypeName}${2:(${3:parameters})} ${4:attributes}",
+      "    [discriminator ${5:dataType} ${6:discriminatorField}]",
+      "    [typeSwitch ${7:discriminatorField}",
+      "        ['${8:value}' ${9:CaseType}",
+      "            [simple ${10:dataType} ${11:fieldName}]",
+      "        ]",
+      "    ]",
+      "]"
+    ],
+    "description": "Create a new discriminated type definition"
+  },
+  "Enum Definition": {
+    "prefix": "enum",
+    "body": [
+      "[enum ${1:dataType} ${2:EnumName}${3:(${4:parameters})} ${5:attributes}",
+      "    ['${6:value}' ${7:ENUM_VALUE}]",
+      "]"
+    ],
+    "description": "Create a new enum definition"
+  },
+  "DataIo Definition": {
+    "prefix": "dataIo",
+    "body": [
+      "[dataIo ${1:DataIoName}${2:(${3:parameters})} ${4:attributes}",
+      "    [typeSwitch ${5:discriminator}",
+      "        ['${6:value}' ${7:CaseType}",
+      "            [simple ${8:dataType} ${9:fieldName}]",
+      "        ]",
+      "    ]",
+      "]"
+    ],
+    "description": "Create a new dataIo definition"
+  },
+  "Simple Field": {
+    "prefix": "simple",
+    "body": "[simple ${1:dataType} ${2:fieldName}]",
+    "description": "Simple field definition"
+  },
+  "Array Field": {
+    "prefix": "array",
+    "body": "[array ${1:dataType} ${2:fieldName} ${3|count,length,terminated|} ${4:expression}]",
+    "description": "Array field definition"
+  },
+  "Const Field": {
+    "prefix": "const",
+    "body": "[const ${1:dataType} ${2:fieldName} ${3:expectedValue}]",
+    "description": "Constant field definition"
+  },
+  "Reserved Field": {
+    "prefix": "reserved",
+    "body": "[reserved ${1:dataType} ${2:expectedValue}]",
+    "description": "Reserved field definition"
+  },
+  "Optional Field": {
+    "prefix": "optional",
+    "body": "[optional ${1:dataType} ${2:fieldName}${3: '${4:condition}'}]",
+    "description": "Optional field definition"
+  },
+  "Discriminator Field": {
+    "prefix": "discriminator",
+    "body": "[discriminator ${1:dataType} ${2:fieldName}]",
+    "description": "Discriminator field definition"
+  },
+  "Implicit Field": {
+    "prefix": "implicit",
+    "body": "[implicit ${1:dataType} ${2:fieldName} '${3:serializeExpression}']",
+    "description": "Implicit field definition"
+  },
+  "Virtual Field": {
+    "prefix": "virtual",
+    "body": "[virtual ${1:dataType} ${2:fieldName} '${3:valueExpression}']",
+    "description": "Virtual field definition"
+  },
+  "Manual Field": {
+    "prefix": "manual",
+    "body": "[manual ${1:dataType} ${2:fieldName} '${3:parseExpression}' '${4:serializeExpression}' '${5:lengthExpression}']",
+    "description": "Manual field definition"
+  },
+  "Manual Array Field": {
+    "prefix": "manualArray",
+    "body": "[manualArray ${1:dataType} ${2:fieldName} ${3|count,length,terminated|} '${4:loopExpression}' '${5:parseExpression}' '${6:serializeExpression}' '${7:lengthExpression}']",
+    "description": "Manual array field definition"
+  },
+  "Checksum Field": {
+    "prefix": "checksum",
+    "body": "[checksum ${1:dataType} ${2:fieldName} '${3:checksumExpression}']",
+    "description": "Checksum field definition"
+  },
+  "Padding Field": {
+    "prefix": "padding",
+    "body": "[padding ${1:dataType} ${2:fieldName} ${3:paddingValue} ${4:timesPadding}]",
+    "description": "Padding field definition"
+  },
+  "Assert Field": {
+    "prefix": "assert",
+    "body": "[assert ${1:dataType} ${2:fieldName} '${3:condition}']",
+    "description": "Assert field definition"
+  },
+  "Validation Field": {
+    "prefix": "validation",
+    "body": "[validation '${1:validationExpression}'${2: \"${3:description}\"}${4: shouldFail=${5|true,false|}}]",
+    "description": "Validation field definition"
+  },
+  "Peek Field": {
+    "prefix": "peek",
+    "body": "[peek ${1:dataType} ${2:fieldName}${3: ${4:offset}}]",
+    "description": "Peek field definition"
+  },
+  "Unknown Field": {
+    "prefix": "unknown",
+    "body": "[unknown ${1:dataType}]",
+    "description": "Unknown field definition"
+  },
+  "Enum Field": {
+    "prefix": "enumField",
+    "body": "[enum ${1:dataType} ${2:fieldName} ${3:enumFieldName}]",
+    "description": "Enum field definition"
+  },
+  "Abstract Field": {
+    "prefix": "abstract",
+    "body": "[abstract ${1:dataType} ${2:fieldName}]",
+    "description": "Abstract field definition"
+  },
+  "Type Switch": {
+    "prefix": "typeSwitch",
+    "body": [
+      "[typeSwitch ${1:discriminator}",
+      "    ['${2:value}' ${3:CaseType}",
+      "        [simple ${4:dataType} ${5:fieldName}]",
+      "    ]",
+      "]"
+    ],
+    "description": "Type switch definition"
+  },
+  "Byte Order Attribute": {
+    "prefix": "byteOrder",
+    "body": "byteOrder='${1|BIG_ENDIAN,LITTLE_ENDIAN|}'",
+    "description": "Byte order attribute"
+  },
+  "Encoding Attribute": {
+    "prefix": "encoding",
+    "body": "encoding='${1|UTF-8,UTF-16,ASCII|}'",
+    "description": "Encoding attribute"
+  },
+  "Static Call Expression": {
+    "prefix": "STATIC_CALL",
+    "body": "STATIC_CALL(\"${1:functionName}\", ${2:arguments})",
+    "description": "Static function call expression"
+  },
+  "Count Expression": {
+    "prefix": "COUNT",
+    "body": "COUNT(${1:array})",
+    "description": "Count function expression"
+  }
+}
