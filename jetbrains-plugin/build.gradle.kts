@@ -12,14 +12,14 @@ repositories {
 }
 
 dependencies {
-    // LSP dependencies removed for now due to compatibility issues
-    // implementation("org.eclipse.lsp4j:org.eclipse.lsp4j:0.21.0")
-    // implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    // LSP dependencies for language server integration
+    implementation("org.eclipse.lsp4j:org.eclipse.lsp4j:0.21.0")
+    // Note: Coroutines are provided by IntelliJ Platform, so we don't need to add them explicitly
 }
 
 // Configure Gradle IntelliJ Plugin
 intellij {
-    version.set("2023.2.5")
+    version.set("2024.1.4")
     type.set("IC") // Target IDE Platform
 
     plugins.set(listOf(
@@ -39,8 +39,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("232")
-        untilBuild.set("241.*")
+        sinceBuild.set("241")
+        untilBuild.set("243.*")
     }
 
     signPlugin {
