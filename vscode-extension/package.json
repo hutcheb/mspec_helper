@@ -144,7 +144,6 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile",
-    "lint": "eslint src --ext ts",
     "test": "echo 'VSCode extension tests not implemented yet'",
     "package": "vsce package",
     "publish": "vsce publish"
