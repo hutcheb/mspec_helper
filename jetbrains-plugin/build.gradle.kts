@@ -12,8 +12,9 @@ repositories {
 }
 
 dependencies {
-    implementation("org.eclipse.lsp4j:org.eclipse.lsp4j:0.21.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    // LSP dependencies removed for now due to compatibility issues
+    // implementation("org.eclipse.lsp4j:org.eclipse.lsp4j:0.21.0")
+    // implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 }
 
 // Configure Gradle IntelliJ Plugin
@@ -53,6 +54,14 @@ tasks {
     }
 
     buildSearchableOptions {
+        enabled = false
+    }
+
+    instrumentCode {
+        enabled = false
+    }
+
+    instrumentTestCode {
         enabled = false
     }
 }

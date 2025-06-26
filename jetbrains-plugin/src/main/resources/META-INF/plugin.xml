@@ -88,9 +88,9 @@
             language="MSpec" 
             implementationClass="com.yourorg.mspec.annotator.MSpecAnnotator"/>
 
-        <!-- Language Server Protocol Support -->
-        <platform.lsp.serverSupportProvider 
-            implementation="com.yourorg.mspec.lsp.MSpecLspServerSupportProvider"/>
+        <!-- Language Server Protocol Support - Disabled for now -->
+        <!-- <platform.lsp.serverSupportProvider
+            implementation="com.yourorg.mspec.lsp.MSpecLspServerSupportProvider"/> -->
 
         <!-- Live Templates -->
         <defaultLiveTemplates file="/liveTemplates/MSpec.xml"/>
@@ -157,8 +157,8 @@
         </action>
     </actions>
 
-    <applicationListeners>
+    <!-- <applicationListeners>
         <listener class="com.yourorg.mspec.lsp.MSpecLspServerLifecycleListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
+    </applicationListeners> -->
 </idea-plugin>
