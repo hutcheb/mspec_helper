@@ -219,7 +219,7 @@ export interface AbstractField extends BaseField {
 
 export interface TypeSwitchField extends BaseField {
   type: 'TypeSwitchField';
-  discriminators: VariableLiteral[];
+  discriminators: Expression[];
   cases: CaseStatement[];
 }
 

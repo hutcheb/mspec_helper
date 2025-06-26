@@ -3,41 +3,38 @@
  */
 
 import {
+  CodeAction,
+  CodeActionKind,
+  CodeActionParams,
+  CompletionItem,
   createConnection,
-  TextDocuments,
+  Definition,
+  DefinitionParams,
   Diagnostic,
   DiagnosticSeverity,
-  ProposedFeatures,
-  InitializeParams,
   DidChangeConfigurationNotification,
-  CompletionItem,
-  CompletionItemKind,
-  TextDocumentPositionParams,
-  TextDocumentSyncKind,
-  InitializeResult,
-  HoverParams,
-  Hover,
-  DefinitionParams,
-  Definition,
-  Location,
   DocumentFormattingParams,
+  Hover,
+  HoverParams,
+  InitializeParams,
+  InitializeResult,
+  ProposedFeatures,
+  TextDocumentPositionParams,
+  TextDocuments,
+  TextDocumentSyncKind,
   TextEdit,
-  CodeActionParams,
-  CodeAction,
-  CodeActionKind
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { URI } from 'vscode-uri';
 
-import { Lexer, TokenType } from './parser/lexer';
-import { MSpecParser } from './parser/parser';
 import { SemanticAnalyzer } from './analyzer/semantic-analyzer';
 import { CompletionProvider } from './features/completion';
-import { HoverProvider } from './features/hover';
 import { DefinitionProvider } from './features/definition';
-import { ValidationProvider } from './features/validation';
 import { FormattingProvider } from './features/formatting';
+import { HoverProvider } from './features/hover';
+import { ValidationProvider } from './features/validation';
+import { Lexer } from './parser/lexer';
+import { MSpecParser } from './parser/parser';
 
 // Create a connection for the server
 const connection = createConnection(ProposedFeatures.all);
@@ -62,9 +59,7 @@ connection.onInitialize((params: InitializeParams) => {
   const capabilities = params.capabilities;
 
   // Does the client support the `workspace/configuration` request?
-  hasConfigurationCapability = !!(
-    capabilities.workspace && !!capabilities.workspace.configuration
-  );
+  hasConfigurationCapability = !!(capabilities.workspace && !!capabilities.workspace.configuration);
   hasWorkspaceFolderCapability = !!(
     capabilities.workspace && !!capabilities.workspace.workspaceFolders
   );
@@ -79,22 +74,22 @@ connection.onInitialize((params: InitializeParams) => {
       textDocumentSync: TextDocumentSyncKind.Incremental,
       completionProvider: {
         resolveProvider: true,
-        triggerCharacters: ['[', ' ', '.', '\'']
+        triggerCharacters: ['[', ' ', '.', "'"],
       },
       hoverProvider: true,
       definitionProvider: true,
       documentFormattingProvider: true,
       codeActionProvider: {
-        codeActionKinds: [CodeActionKind.QuickFix, CodeActionKind.Refactor]
-      }
-    }
+        codeActionKinds: [CodeActionKind.QuickFix, CodeActionKind.Refactor],
+      },
+    },
   };
 
   if (hasWorkspaceFolderCapability) {
     result.capabilities.workspace = {
       workspaceFolders: {
-        supported: true
-      }
+        supported: true,
+      },
     };
   }
 
@@ -133,16 +128,16 @@ interface MSpecSettings {
 const defaultSettings: MSpecSettings = {
   validation: {
     enabled: true,
-    strictMode: false
+    strictMode: false,
   },
   completion: {
     enabled: true,
-    snippets: true
+    snippets: true,
   },
   formatting: {
     enabled: true,
-    indentSize: 4
-  }
+    indentSize: 4,
+  },
 };
 
 let globalSettings: MSpecSettings = defaultSettings;
@@ -155,9 +150,7 @@ connection.onDidChangeConfiguration(change => {
     // Reset all cached document settings
     documentSettings.clear();
   } else {
-    globalSettings = <MSpecSettings>(
-      (change.settings.mspec || defaultSettings)
-    );
+    globalSettings = <MSpecSettings>(change.settings.mspec || defaultSettings);
   }
 
   // Revalidate all open text documents
@@ -172,7 +165,7 @@ function getDocumentSettings(resource: string): Thenable<MSpecSettings> {
   if (!result) {
     result = connection.workspace.getConfiguration({
       scopeUri: resource,
-      section: 'mspec'
+      section: 'mspec',
     });
     documentSettings.set(resource, result);
   }
@@ -191,7 +184,7 @@ documents.onDidChangeContent(change => {
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
   const settings = await getDocumentSettings(textDocument.uri);
-  
+
   if (!settings.validation.enabled) {
     return;
   }
@@ -199,161 +192,225 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
   const text = textDocument.getText();
   const lexer = new Lexer(text);
   const tokens = lexer.tokenize();
-  
+
   try {
     const ast = parser.parse(tokens);
     const analysisResult = semanticAnalyzer.analyze(ast);
     const diagnostics = validationProvider.validate(textDocument, ast, analysisResult, settings);
-    
+
     connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
   } catch (error) {
     // Handle parsing errors
-    const diagnostics: Diagnostic[] = [{
-      severity: DiagnosticSeverity.Error,
-      range: {
-        start: textDocument.positionAt(0),
-        end: textDocument.positionAt(text.length)
+    const diagnostics: Diagnostic[] = [
+      {
+        severity: DiagnosticSeverity.Error,
+        range: {
+          start: textDocument.positionAt(0),
+          end: textDocument.positionAt(text.length),
+        },
+        message: `Parse error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        source: 'mspec',
       },
-      message: `Parse error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      source: 'mspec'
-    }];
-    
+    ];
+
     connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
   }
 }
 
 // Completion handler
-connection.onCompletion(
-  async (params: TextDocumentPositionParams): Promise<CompletionItem[]> => {
-    const document = documents.get(params.textDocument.uri);
-    if (!document) {
-      return [];
-    }
-
-    const settings = await getDocumentSettings(params.textDocument.uri);
-    if (!settings.completion.enabled) {
-      return [];
-    }
-
-    const text = document.getText();
-    const lexer = new Lexer(text);
-    const tokens = lexer.tokenize();
-
-    try {
-      const ast = parser.parse(tokens);
-      const analysisResult = semanticAnalyzer.analyze(ast);
-
-      return completionProvider.provideCompletions(
-        document,
-        params.position,
-        ast,
-        analysisResult,
-        settings
-      );
-    } catch (error) {
-      connection.console.error(`Completion error: ${error}`);
-      return [];
-    }
+connection.onCompletion(async (params: TextDocumentPositionParams): Promise<CompletionItem[]> => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) {
+    return [];
   }
-);
+
+  const settings = await getDocumentSettings(params.textDocument.uri);
+  if (!settings.completion.enabled) {
+    return [];
+  }
+
+  const text = document.getText();
+  const lexer = new Lexer(text);
+  const tokens = lexer.tokenize();
+
+  try {
+    const ast = parser.parse(tokens);
+    const analysisResult = semanticAnalyzer.analyze(ast);
+
+    return completionProvider.provideCompletions(
+      document,
+      params.position,
+      ast,
+      analysisResult,
+      settings
+    );
+  } catch (error) {
+    connection.console.error(`Completion error: ${error}`);
+    return [];
+  }
+});
 
 // Completion resolve handler
-connection.onCompletionResolve(
-  (item: CompletionItem): CompletionItem => {
-    return completionProvider.resolveCompletion(item);
-  }
-);
+connection.onCompletionResolve((item: CompletionItem): CompletionItem => {
+  return completionProvider.resolveCompletion(item);
+});
 
 // Hover handler
-connection.onHover(
-  async (params: HoverParams): Promise<Hover | null> => {
-    const document = documents.get(params.textDocument.uri);
-    if (!document) {
-      return null;
-    }
-
-    const text = document.getText();
-    const lexer = new Lexer(text);
-    const tokens = lexer.tokenize();
-
-    try {
-      const ast = parser.parse(tokens);
-      const analysisResult = semanticAnalyzer.analyze(ast);
-
-      return hoverProvider.provideHover(
-        document,
-        params.position,
-        ast,
-        analysisResult
-      );
-    } catch (error) {
-      connection.console.error(`Hover error: ${error}`);
-      return null;
-    }
+connection.onHover(async (params: HoverParams): Promise<Hover | null> => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) {
+    return null;
   }
-);
+
+  const text = document.getText();
+  const lexer = new Lexer(text);
+  const tokens = lexer.tokenize();
+
+  try {
+    const ast = parser.parse(tokens);
+    const analysisResult = semanticAnalyzer.analyze(ast);
+
+    return hoverProvider.provideHover(document, params.position, ast, analysisResult);
+  } catch (error) {
+    connection.console.error(`Hover error: ${error}`);
+    return null;
+  }
+});
 
 // Definition handler
-connection.onDefinition(
-  async (params: DefinitionParams): Promise<Definition | null> => {
-    const document = documents.get(params.textDocument.uri);
-    if (!document) {
-      return null;
-    }
-
-    const text = document.getText();
-    const lexer = new Lexer(text);
-    const tokens = lexer.tokenize();
-
-    try {
-      const ast = parser.parse(tokens);
-      const analysisResult = semanticAnalyzer.analyze(ast);
-
-      return definitionProvider.provideDefinition(
-        document,
-        params.position,
-        ast,
-        analysisResult
-      );
-    } catch (error) {
-      connection.console.error(`Definition error: ${error}`);
-      return null;
-    }
+connection.onDefinition(async (params: DefinitionParams): Promise<Definition | null> => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) {
+    return null;
   }
-);
+
+  const text = document.getText();
+  const lexer = new Lexer(text);
+  const tokens = lexer.tokenize();
+
+  try {
+    const ast = parser.parse(tokens);
+    const analysisResult = semanticAnalyzer.analyze(ast);
+
+    return definitionProvider.provideDefinition(document, params.position, ast, analysisResult);
+  } catch (error) {
+    connection.console.error(`Definition error: ${error}`);
+    return null;
+  }
+});
 
 // Document formatting handler
-connection.onDocumentFormatting(
-  async (params: DocumentFormattingParams): Promise<TextEdit[]> => {
-    const document = documents.get(params.textDocument.uri);
-    if (!document) {
-      return [];
-    }
-
-    const settings = await getDocumentSettings(params.textDocument.uri);
-    if (!settings.formatting.enabled) {
-      return [];
-    }
-
-    const text = document.getText();
-    const lexer = new Lexer(text);
-    const tokens = lexer.tokenize();
-
-    try {
-      const ast = parser.parse(tokens);
-
-      return formattingProvider.formatDocument(
-        document,
-        ast,
-        params.options,
-        settings
-      );
-    } catch (error) {
-      connection.console.error(`Formatting error: ${error}`);
-      return [];
-    }
+connection.onDocumentFormatting(async (params: DocumentFormattingParams): Promise<TextEdit[]> => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) {
+    return [];
   }
-);
+
+  const settings = await getDocumentSettings(params.textDocument.uri);
+  if (!settings.formatting.enabled) {
+    return [];
+  }
+
+  const text = document.getText();
+  const lexer = new Lexer(text);
+  const tokens = lexer.tokenize();
+
+  try {
+    const ast = parser.parse(tokens);
+
+    return formattingProvider.formatDocument(document, ast, params.options, settings);
+  } catch (error) {
+    connection.console.error(`Formatting error: ${error}`);
+    return [];
+  }
+});
+
+// Code action handler
+connection.onCodeAction(async (params: CodeActionParams): Promise<CodeAction[]> => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) {
+    return [];
+  }
+
+  const text = document.getText();
+  const lexer = new Lexer(text);
+  const tokens = lexer.tokenize();
+
+  try {
+    const ast = parser.parse(tokens);
+    const analysisResult = semanticAnalyzer.analyze(ast);
+
+    // For now, return empty array - can be extended with actual code actions
+    const codeActions: CodeAction[] = [];
+
+    // Example: Add quick fix for common syntax errors
+    for (const diagnostic of params.context.diagnostics) {
+      if (diagnostic.source === 'mspec' && diagnostic.severity === DiagnosticSeverity.Error) {
+        // Could add quick fixes here based on the error message
+        // For example: auto-correct common typos, add missing brackets, etc.
+      }
+    }
+
+    return codeActions;
+  } catch (error) {
+    connection.console.error(`Code action error: ${error}`);
+    return [];
+  }
+});
+
+// Add handlers for common optional LSP methods to prevent "unhandled method" warnings
+
+// Document symbols (outline view)
+connection.onDocumentSymbol(() => {
+  // Return empty for now - can be implemented later
+  return [];
+});
+
+// Workspace symbols (global symbol search)
+connection.onWorkspaceSymbol(() => {
+  // Return empty for now - can be implemented later
+  return [];
+});
+
+// Find references
+connection.onReferences(() => {
+  // Return empty for now - can be implemented later
+  return [];
+});
+
+// Rename symbol
+connection.onRenameRequest(() => {
+  // Return null for now - can be implemented later
+  return null;
+});
+
+// Add error handling for unhandled methods
+connection.onRequest((method, params) => {
+  connection.console.warn(`Unhandled request: ${method}`);
+  return null;
+});
+
+connection.onNotification((method, params) => {
+  // Ignore common notifications that we don't need to handle
+  const ignoredNotifications = [
+    'textDocument/didOpen',
+    'textDocument/didChange',
+    'textDocument/didClose',
+    'textDocument/didSave',
+    'workspace/didChangeConfiguration',
+    'workspace/didChangeWorkspaceFolders',
+    'initialized',
+    'exit',
+    '$/cancelRequest', // VSCode cancellation requests
+    '$/progress', // Progress notifications
+    'window/logMessage', // Log messages
+    'telemetry/event', // Telemetry events
+  ];
+
+  if (!ignoredNotifications.includes(method)) {
+    connection.console.warn(`Unhandled notification: ${method}`);
+  }
+});
 
 // Make the text document manager listen on the connection
 documents.listen(connection);

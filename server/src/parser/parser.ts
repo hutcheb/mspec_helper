@@ -40,7 +40,6 @@ import {
   UnaryOperator,
   UnknownField,
   ValidationField,
-  VariableLiteral,
   VirtualField,
 } from '../types/mspec-types';
 import { Token, TokenType } from './lexer';
@@ -228,11 +227,8 @@ export class MSpecParser {
 
         // For parameters, we expect a data type followed by a name
         // e.g., "uint 16 length" should be parsed as dataType="uint 16", name="length"
-        const dataType: TypeReference = {
-          type: 'SimpleTypeReference',
-          range: this.createRange(this.current, this.current),
-          dataType: this.parseDataType(),
-        };
+        // or "DriverType driverType" for custom types
+        const dataType: TypeReference = this.parseTypeReference();
 
         const name = this.consumeIdentifier('Expected parameter name');
 
@@ -379,17 +375,8 @@ export class MSpecParser {
     // Handle quoted expressions
     let loopExpression: Expression;
     if (this.match(TokenType.TICK)) {
-      // Parse the content inside quotes as an identifier or expression
-      if (this.check(TokenType.IDENTIFIER)) {
-        const name = this.advance().value;
-        loopExpression = {
-          type: 'VariableLiteral',
-          range: this.createRange(this.current - 1, this.current - 1),
-          name,
-        };
-      } else {
-        loopExpression = this.parseExpression();
-      }
+      // Parse the full expression inside quotes
+      loopExpression = this.parseExpression();
       this.consume(TokenType.TICK, 'Expected closing quote');
     } else {
       loopExpression = this.parseExpression();
@@ -653,7 +640,58 @@ export class MSpecParser {
       };
     }
 
-    return this.parsePrimary();
+    return this.parsePostfix();
+  }
+
+  private parsePostfix(): Expression {
+    let expr = this.parsePrimary();
+
+    while (true) {
+      if (this.match(TokenType.DOT)) {
+        const field = this.consumeIdentifier('Expected field name after "."');
+        expr = {
+          type: 'FieldAccess',
+          range: this.createRange(this.current - 2, this.current - 1),
+          object: expr,
+          field,
+        };
+      } else if (this.match(TokenType.LEFT_BRACKET)) {
+        const index = this.parseExpression();
+        this.consume(TokenType.RIGHT_BRACKET, 'Expected "]" after array index');
+        expr = {
+          type: 'ArrayAccess',
+          range: this.createRange(this.current - 3, this.current - 1),
+          array: expr,
+          index,
+        };
+      } else {
+        break;
+      }
+    }
+
+    return expr;
+  }
+
+  private parseDiscriminatorExpression(): Expression {
+    // Parse discriminator expressions - similar to parsePostfix but without array access
+    // to avoid conflicts with typeSwitch case syntax
+    let expr = this.parsePrimary();
+
+    while (true) {
+      if (this.match(TokenType.DOT)) {
+        const field = this.consumeIdentifier('Expected field name after "."');
+        expr = {
+          type: 'FieldAccess',
+          range: this.createRange(this.current - 2, this.current - 1),
+          object: expr,
+          field,
+        };
+      } else {
+        break;
+      }
+    }
+
+    return expr;
   }
 
   private parsePrimary(): Expression {
@@ -1076,33 +1114,51 @@ export class MSpecParser {
   }
 
   private parseTypeSwitchField(startToken?: Token): TypeSwitchField {
-    const discriminators: VariableLiteral[] = [];
+    const discriminators: Expression[] = [];
 
-    // Parse discriminator list
+    // Parse discriminator list - can be simple identifiers or member access expressions
     do {
-      const discriminator = this.consumeIdentifier('Expected discriminator name');
-      discriminators.push({
-        type: 'VariableLiteral',
-        range: this.createRange(this.current - 1, this.current - 1),
-        name: discriminator,
-      });
+      const discriminator = this.parseDiscriminatorExpression();
+      discriminators.push(discriminator);
     } while (this.match(TokenType.COMMA));
 
     const cases: CaseStatement[] = [];
 
     // Parse case statements
-    while (this.check(TokenType.LEFT_BRACKET) && this.peekNext()?.type === TokenType.TICK) {
+    while (true) {
+      // Skip comments and whitespace
+      this.skipWhitespaceAndComments();
+
+      // Check if we have a case statement
+      // Cases can be: ['value' Name] or [Name] (default case)
+      if (!this.check(TokenType.LEFT_BRACKET)) {
+        break;
+      }
+
+      const nextToken = this.peekNext();
+      if (
+        !nextToken ||
+        (nextToken.type !== TokenType.TICK && nextToken.type !== TokenType.IDENTIFIER)
+      ) {
+        break;
+      }
       this.advance(); // consume '['
 
       const discriminatorValues: Expression[] = [];
 
-      // Parse discriminator values
+      // Parse discriminator values - each value is in its own quotes
       if (this.match(TokenType.TICK)) {
-        do {
-          const value = this.parseExpression();
-          discriminatorValues.push(value);
-        } while (this.match(TokenType.COMMA));
+        const value = this.parseExpression();
+        discriminatorValues.push(value);
         this.consume(TokenType.TICK, 'Expected closing quote');
+
+        // Parse additional discriminator values separated by commas
+        while (this.match(TokenType.COMMA)) {
+          this.consume(TokenType.TICK, 'Expected opening quote for discriminator value');
+          const additionalValue = this.parseExpression();
+          discriminatorValues.push(additionalValue);
+          this.consume(TokenType.TICK, 'Expected closing quote for discriminator value');
+        }
       }
 
       const name = this.consumeIdentifier('Expected case type name');
@@ -1116,13 +1172,33 @@ export class MSpecParser {
 
       // Parse case fields
       const fields: FieldDefinition[] = [];
-      while (this.check(TokenType.LEFT_BRACKET) && !this.checkNext(TokenType.TICK)) {
+      while (!this.isAtEnd()) {
+        // Skip comments and whitespace
+        this.skipWhitespaceAndComments();
+
+        // Stop if we've reached the end of the case (closing bracket)
+        if (this.check(TokenType.RIGHT_BRACKET)) {
+          break;
+        }
+
+        // Stop if we've reached the start of the next case
+        if (this.check(TokenType.LEFT_BRACKET) && this.checkNext(TokenType.TICK)) {
+          break;
+        }
+
+        // If we don't see a field start, break
+        if (!this.check(TokenType.LEFT_BRACKET)) {
+          break;
+        }
+
         const field = this.parseFieldDefinition();
         if (field) {
           fields.push(field);
         }
       }
 
+      // Skip comments and whitespace before closing bracket
+      this.skipWhitespaceAndComments();
       this.consume(TokenType.RIGHT_BRACKET, 'Expected "]" after case statement');
 
       cases.push({
@@ -1134,6 +1210,12 @@ export class MSpecParser {
         fields,
       });
     }
+
+    // Skip comments and whitespace before closing bracket
+    this.skipWhitespaceAndComments();
+
+    // Consume the closing bracket of the typeSwitch field
+    this.consume(TokenType.RIGHT_BRACKET, 'Expected "]" after typeSwitch field');
 
     const endPos = startToken ? this.getTokenIndex(startToken) : this.current - cases.length - 5;
 
