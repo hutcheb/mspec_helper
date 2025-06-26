@@ -44,7 +44,7 @@ const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
 let hasConfigurationCapability = false;
 let hasWorkspaceFolderCapability = false;
-// let hasDiagnosticRelatedInformationCapability = false; // Unused variable
+// let hasDiagnosticRelatedInformationCapability = false; // Currently unused
 
 // Initialize providers
 const parser = new MSpecParser();
@@ -63,11 +63,11 @@ connection.onInitialize((params: InitializeParams) => {
   hasWorkspaceFolderCapability = !!(
     capabilities.workspace && !!capabilities.workspace.workspaceFolders
   );
-  hasDiagnosticRelatedInformationCapability = !!(
-    capabilities.textDocument &&
-    capabilities.textDocument.publishDiagnostics &&
-    capabilities.textDocument.publishDiagnostics.relatedInformation
-  );
+  // hasDiagnosticRelatedInformationCapability = !!(
+  //   capabilities.textDocument &&
+  //   capabilities.textDocument.publishDiagnostics &&
+  //   capabilities.textDocument.publishDiagnostics.relatedInformation
+  // );
 
   const result: InitializeResult = {
     capabilities: {

@@ -1,3 +1,5 @@
+[![Made by AI](https://img.shields.io/badge/Made%20by-AI-lightgrey?style=for-the-badge)](https://github.com/mefengl/made-by-ai)
+
 # MSpec Language Server Protocol Implementation
 
 A comprehensive Language Server Protocol (LSP) implementation for PLC4X MSpec files, providing rich language support in VSCode and JetBrains IDEs.

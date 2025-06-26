@@ -4,7 +4,7 @@
 
 import { Hover, MarkupKind, Position, Range, TextDocument } from 'vscode-languageserver/node';
 
-import { AnalysisResult, SymbolScope } from '../analyzer/semantic-analyzer';
+import { AnalysisResult, MSpecSymbol, SymbolScope } from '../analyzer/semantic-analyzer';
 import { MSpecFile } from '../types/mspec-types';
 
 export class HoverProvider {
@@ -80,12 +80,12 @@ export class HoverProvider {
     analysisResult: AnalysisResult,
     range: Range,
     word: string,
-  ): symbol | null {
+  ): MSpecSymbol | null {
     // Look for the symbol in the symbol table
     return this.findSymbolInScope(analysisResult.symbolTable, word);
   }
 
-  private findSymbolInScope(scope: SymbolScope, name: string): symbol | null {
+  private findSymbolInScope(scope: SymbolScope, name: string): MSpecSymbol | null {
     // Check current scope
     const symbol = scope.symbols.get(name);
     if (symbol) {
@@ -103,7 +103,7 @@ export class HoverProvider {
     return null;
   }
 
-  private createSymbolHover(symbol: symbol, range: Range): Hover {
+  private createSymbolHover(symbol: MSpecSymbol, range: Range): Hover {
     const content = this.createSymbolMarkdown(symbol);
 
     return {
@@ -115,7 +115,7 @@ export class HoverProvider {
     };
   }
 
-  private createSymbolMarkdown(symbol: symbol): string {
+  private createSymbolMarkdown(symbol: MSpecSymbol): string {
     let content = `**${symbol.name}** *(${symbol.type})*\n\n`;
 
     switch (symbol.type) {
@@ -138,7 +138,7 @@ export class HoverProvider {
     return content;
   }
 
-  private createTypeDocumentation(symbol: symbol): string {
+  private createTypeDocumentation(symbol: MSpecSymbol): string {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const definition = symbol.definition as any;
     let content = '';
@@ -175,7 +175,7 @@ export class HoverProvider {
     return content;
   }
 
-  private createFieldDocumentation(symbol: symbol): string {
+  private createFieldDocumentation(symbol: MSpecSymbol): string {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const field = symbol.definition as any;
     let content = '';
@@ -232,13 +232,13 @@ export class HoverProvider {
     return content;
   }
 
-  private createParameterDocumentation(symbol: symbol): string {
+  private createParameterDocumentation(symbol: MSpecSymbol): string {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const param = symbol.definition as any;
     return `Parameter of type \`${this.formatTypeReference(param.dataType)}\``;
   }
 
-  private createEnumValueDocumentation(symbol: symbol): string {
+  private createEnumValueDocumentation(symbol: MSpecSymbol): string {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const enumValue = symbol.definition as any;
     let content = 'Enumeration value';

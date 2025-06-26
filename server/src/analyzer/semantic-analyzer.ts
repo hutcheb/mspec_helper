@@ -18,7 +18,7 @@ import {
   VariableLiteral,
 } from '../types/mspec-types';
 
-export interface Symbol {
+export interface MSpecSymbol {
   name: string;
   type: string;
   definition: ASTNode;
@@ -28,7 +28,7 @@ export interface Symbol {
 export interface SymbolScope {
   name: string;
   parent?: SymbolScope;
-  symbols: Map<string, symbol>;
+  symbols: Map<string, MSpecSymbol>;
   children: SymbolScope[];
 }
 
@@ -42,7 +42,7 @@ export interface AnalysisResult {
   symbolTable: SymbolScope;
   errors: SemanticError[];
   typeDefinitions: Map<string, ComplexTypeDefinition>;
-  fieldReferences: Map<ASTNode, symbol>;
+  fieldReferences: Map<ASTNode, MSpecSymbol>;
 }
 
 export class SemanticAnalyzer {
@@ -50,7 +50,7 @@ export class SemanticAnalyzer {
   private currentScope: SymbolScope;
   private errors: SemanticError[] = [];
   private typeDefinitions: Map<string, ComplexTypeDefinition> = new Map();
-  private fieldReferences: Map<ASTNode, symbol> = new Map();
+  private fieldReferences: Map<ASTNode, MSpecSymbol> = new Map();
 
   constructor() {
     this.globalScope = {
@@ -432,7 +432,7 @@ export class SemanticAnalyzer {
       return;
     }
 
-    const symbol: symbol = {
+    const symbol: MSpecSymbol = {
       name,
       type,
       definition,
@@ -442,7 +442,7 @@ export class SemanticAnalyzer {
     this.currentScope.symbols.set(name, symbol);
   }
 
-  private resolveSymbol(name: string): symbol | null {
+  private resolveSymbol(name: string): MSpecSymbol | null {
     let scope: SymbolScope | undefined = this.currentScope;
 
     while (scope) {

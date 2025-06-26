@@ -4,7 +4,7 @@
 
 import { Definition, Location, Position, Range, TextDocument } from 'vscode-languageserver/node';
 
-import { AnalysisResult, SymbolScope } from '../analyzer/semantic-analyzer';
+import { AnalysisResult, MSpecSymbol, SymbolScope } from '../analyzer/semantic-analyzer';
 import { MSpecFile } from '../types/mspec-types';
 
 export class DefinitionProvider {
@@ -66,12 +66,12 @@ export class DefinitionProvider {
     return /[a-zA-Z0-9_-]/.test(char);
   }
 
-  private findSymbolAtPosition(analysisResult: AnalysisResult, word: string): symbol | null {
+  private findSymbolAtPosition(analysisResult: AnalysisResult, word: string): MSpecSymbol | null {
     // Look for the symbol in the symbol table
     return this.findSymbolInScope(analysisResult.symbolTable, word);
   }
 
-  private findSymbolInScope(scope: SymbolScope, name: string): symbol | null {
+  private findSymbolInScope(scope: SymbolScope, name: string): MSpecSymbol | null {
     // Check current scope
     const symbol = scope.symbols.get(name);
     if (symbol) {
@@ -89,7 +89,7 @@ export class DefinitionProvider {
     return null;
   }
 
-  private createLocationFromSymbol(document: TextDocument, symbol: symbol): Location | null {
+  private createLocationFromSymbol(document: TextDocument, symbol: MSpecSymbol): Location | null {
     const definition = symbol.definition;
 
     if (!definition.range) {
