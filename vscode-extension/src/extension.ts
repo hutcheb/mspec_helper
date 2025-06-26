@@ -9,7 +9,7 @@ import {
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
-  TransportKind
+  TransportKind,
 } from 'vscode-languageclient/node';
 
 let client: LanguageClient;
@@ -39,7 +39,7 @@ export function deactivate(): Thenable<void> | undefined {
 function startLanguageServer(context: ExtensionContext) {
   // The server is implemented in node
   const serverModule = context.asAbsolutePath(
-    path.join('..', 'server', 'out', 'server.js')
+    path.join('..', 'server', 'out', 'server.js'),
   );
 
   // Check if user has specified a custom server path
@@ -57,14 +57,14 @@ function startLanguageServer(context: ExtensionContext) {
     run: {
       module: customServerPath || serverModule,
       transport: TransportKind.ipc,
-      args: serverArgs
+      args: serverArgs,
     },
     debug: {
       module: customServerPath || serverModule,
       transport: TransportKind.ipc,
       options: debugOptions,
-      args: serverArgs
-    }
+      args: serverArgs,
+    },
   };
 
   // Options to control the language client
@@ -73,10 +73,10 @@ function startLanguageServer(context: ExtensionContext) {
     documentSelector: [{ scheme: 'file', language: 'mspec' }],
     synchronize: {
       // Notify the server about file changes to '.mspec' files contained in the workspace
-      fileEvents: workspace.createFileSystemWatcher('**/*.mspec')
+      fileEvents: workspace.createFileSystemWatcher('**/*.mspec'),
     },
     outputChannel: outputChannel,
-    traceOutputChannel: outputChannel
+    traceOutputChannel: outputChannel,
   };
 
   // Create the language client and start the client.
@@ -84,7 +84,7 @@ function startLanguageServer(context: ExtensionContext) {
     'mspecLanguageServer',
     'MSpec Language Server',
     serverOptions,
-    clientOptions
+    clientOptions,
   );
 
   // Start the client. This will also launch the server

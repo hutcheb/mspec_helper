@@ -44,7 +44,7 @@ const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
 let hasConfigurationCapability = false;
 let hasWorkspaceFolderCapability = false;
-let hasDiagnosticRelatedInformationCapability = false;
+// let hasDiagnosticRelatedInformationCapability = false; // Unused variable
 
 // Initialize providers
 const parser = new MSpecParser();
@@ -242,7 +242,7 @@ connection.onCompletion(async (params: TextDocumentPositionParams): Promise<Comp
       params.position,
       ast,
       analysisResult,
-      settings
+      settings,
     );
   } catch (error) {
     connection.console.error(`Completion error: ${error}`);
@@ -332,13 +332,13 @@ connection.onCodeAction(async (params: CodeActionParams): Promise<CodeAction[]> 
     return [];
   }
 
-  const text = document.getText();
-  const lexer = new Lexer(text);
-  const tokens = lexer.tokenize();
+  // const text = document.getText();
+  // const lexer = new Lexer(text);
+  // const tokens = lexer.tokenize();
 
   try {
-    const ast = parser.parse(tokens);
-    const analysisResult = semanticAnalyzer.analyze(ast);
+    // const ast = parser.parse(tokens); // Unused variable
+    // const analysisResult = semanticAnalyzer.analyze(ast); // Unused variable
 
     // For now, return empty array - can be extended with actual code actions
     const codeActions: CodeAction[] = [];
@@ -385,12 +385,12 @@ connection.onRenameRequest(() => {
 });
 
 // Add error handling for unhandled methods
-connection.onRequest((method, params) => {
+connection.onRequest((method, _params) => {
   connection.console.warn(`Unhandled request: ${method}`);
   return null;
 });
 
-connection.onNotification((method, params) => {
+connection.onNotification((method, _params) => {
   // Ignore common notifications that we don't need to handle
   const ignoredNotifications = [
     'textDocument/didOpen',

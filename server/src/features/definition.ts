@@ -2,23 +2,17 @@
  * Definition provider for MSpec language
  */
 
-import {
-  Definition,
-  Location,
-  Position,
-  TextDocument,
-  Range
-} from 'vscode-languageserver/node';
+import { Definition, Location, Position, Range, TextDocument } from 'vscode-languageserver/node';
 
+import { AnalysisResult, SymbolScope } from '../analyzer/semantic-analyzer';
 import { MSpecFile } from '../types/mspec-types';
-import { AnalysisResult, Symbol } from '../analyzer/semantic-analyzer';
 
 export class DefinitionProvider {
   public provideDefinition(
     document: TextDocument,
     position: Position,
     ast: MSpecFile,
-    analysisResult: AnalysisResult
+    analysisResult: AnalysisResult,
   ): Definition | null {
     // Find the word at the cursor position
     const wordRange = this.getWordRangeAtPosition(document, position);
@@ -27,7 +21,7 @@ export class DefinitionProvider {
     }
 
     const word = document.getText(wordRange);
-    
+
     // Find the symbol definition
     const symbol = this.findSymbolAtPosition(analysisResult, word);
     if (!symbol) {
@@ -46,41 +40,38 @@ export class DefinitionProvider {
   private getWordRangeAtPosition(document: TextDocument, position: Position): Range | null {
     const text = document.getText();
     const offset = document.offsetAt(position);
-    
+
     // Find word boundaries
     let start = offset;
     let end = offset;
-    
+
     // Move start backwards to find word start
     while (start > 0 && this.isWordCharacter(text[start - 1])) {
       start--;
     }
-    
+
     // Move end forwards to find word end
     while (end < text.length && this.isWordCharacter(text[end])) {
       end++;
     }
-    
+
     if (start === end) {
       return null;
     }
-    
-    return Range.create(
-      document.positionAt(start),
-      document.positionAt(end)
-    );
+
+    return Range.create(document.positionAt(start), document.positionAt(end));
   }
 
   private isWordCharacter(char: string): boolean {
     return /[a-zA-Z0-9_-]/.test(char);
   }
 
-  private findSymbolAtPosition(analysisResult: AnalysisResult, word: string): Symbol | null {
+  private findSymbolAtPosition(analysisResult: AnalysisResult, word: string): symbol | null {
     // Look for the symbol in the symbol table
     return this.findSymbolInScope(analysisResult.symbolTable, word);
   }
 
-  private findSymbolInScope(scope: any, name: string): Symbol | null {
+  private findSymbolInScope(scope: SymbolScope, name: string): symbol | null {
     // Check current scope
     const symbol = scope.symbols.get(name);
     if (symbol) {
@@ -98,9 +89,9 @@ export class DefinitionProvider {
     return null;
   }
 
-  private createLocationFromSymbol(document: TextDocument, symbol: Symbol): Location | null {
+  private createLocationFromSymbol(document: TextDocument, symbol: symbol): Location | null {
     const definition = symbol.definition;
-    
+
     if (!definition.range) {
       return null;
     }

@@ -26,7 +26,7 @@ export class CompletionProvider {
     position: Position,
     _ast: MSpecFile,
     analysisResult: AnalysisResult,
-    settings: MSpecSettings
+    settings: MSpecSettings,
   ): CompletionItem[] {
     const lineText = document.getText({
       start: { line: position.line, character: 0 },
@@ -90,7 +90,10 @@ export class CompletionProvider {
     return item;
   }
 
-  private getCompletionContext(lineText: string, character: number): { type: string; data?: any } {
+  private getCompletionContext(
+    lineText: string,
+    character: number,
+  ): { type: string; data?: unknown } {
     const beforeCursor = lineText.substring(0, character).trim();
 
     // Check if we're at the top level (expecting type definitions)
@@ -208,7 +211,7 @@ export class CompletionProvider {
         { label: 'type', kind: CompletionItemKind.Keyword, data: { type: 'keyword' } },
         { label: 'discriminatedType', kind: CompletionItemKind.Keyword, data: { type: 'keyword' } },
         { label: 'enum', kind: CompletionItemKind.Keyword, data: { type: 'keyword' } },
-        { label: 'dataIo', kind: CompletionItemKind.Keyword, data: { type: 'keyword' } }
+        { label: 'dataIo', kind: CompletionItemKind.Keyword, data: { type: 'keyword' } },
       );
     }
 
@@ -275,7 +278,7 @@ export class CompletionProvider {
           insertTextFormat: InsertTextFormat.Snippet,
           documentation: 'Optional field definition',
           data: { type: 'fieldType' },
-        }
+        },
       );
     }
 
@@ -304,7 +307,7 @@ export class CompletionProvider {
         insertText = `${dataType} \${1:size}`;
         snippet = true;
       } else if (dataType === 'vstring') {
-        insertText = `${dataType}\${1: \'\${2:length}\'}`;
+        insertText = `${dataType}\${1: '\${2:length}'}`;
         snippet = true;
       }
 
@@ -406,7 +409,7 @@ export class CompletionProvider {
 
   private getGeneralCompletions(
     analysisResult: AnalysisResult,
-    _settings: MSpecSettings
+    _settings: MSpecSettings,
   ): CompletionItem[] {
     const completions: CompletionItem[] = [];
 

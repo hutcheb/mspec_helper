@@ -7,7 +7,7 @@ import {
   TextDocument,
   FormattingOptions,
   Range,
-  Position
+  Position,
 } from 'vscode-languageserver/node';
 
 import { MSpecFile } from '../types/mspec-types';
@@ -24,7 +24,7 @@ export class FormattingProvider {
     document: TextDocument,
     ast: MSpecFile,
     options: FormattingOptions,
-    settings: MSpecSettings
+    settings: MSpecSettings,
   ): TextEdit[] {
     const text = document.getText();
     const lines = text.split('\n');
@@ -55,7 +55,7 @@ export class FormattingProvider {
       if (currentIndent !== expectedIndent) {
         const range = Range.create(
           Position.create(i, 0),
-          Position.create(i, currentIndent.length)
+          Position.create(i, currentIndent.length),
         );
         
         edits.push(TextEdit.replace(range, expectedIndent));

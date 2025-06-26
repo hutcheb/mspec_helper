@@ -51,7 +51,7 @@ describe('MSpec Parser', () => {
 
       const typeDef = ast.definitions[0] as TypeDefinition;
       expect(typeDef.parameters).toHaveLength(1);
-      expect(typeDef.parameters![0].name).toBe('length');
+      expect(typeDef.parameters?.[0]?.name).toBe('length');
     });
 
     test('should parse type definition with attributes', () => {

@@ -2,14 +2,10 @@
  * Validation provider for MSpec language
  */
 
-import {
-  Diagnostic,
-  DiagnosticSeverity,
-  TextDocument
-} from 'vscode-languageserver/node';
+import { Diagnostic, DiagnosticSeverity, TextDocument } from 'vscode-languageserver/node';
 
-import { MSpecFile } from '../types/mspec-types';
 import { AnalysisResult, SemanticError } from '../analyzer/semantic-analyzer';
+import { ComplexTypeDefinition, MSpecFile } from '../types/mspec-types';
 
 interface MSpecSettings {
   validation: {
@@ -23,7 +19,7 @@ export class ValidationProvider {
     document: TextDocument,
     ast: MSpecFile,
     analysisResult: AnalysisResult,
-    settings: MSpecSettings
+    settings: MSpecSettings,
   ): Diagnostic[] {
     const diagnostics: Diagnostic[] = [];
 
@@ -42,7 +38,7 @@ export class ValidationProvider {
 
   private createDiagnosticFromError(error: SemanticError): Diagnostic {
     let severity: DiagnosticSeverity;
-    
+
     switch (error.severity) {
       case 'error':
         severity = DiagnosticSeverity.Error;
@@ -61,7 +57,7 @@ export class ValidationProvider {
       severity,
       range: error.node.range,
       message: error.message,
-      source: 'mspec'
+      source: 'mspec',
     };
   }
 
@@ -75,7 +71,7 @@ export class ValidationProvider {
           severity: DiagnosticSeverity.Warning,
           range: typeDefinition.range,
           message: `Type '${typeName}' is defined but never used`,
-          source: 'mspec'
+          source: 'mspec',
         });
       }
     }
@@ -88,7 +84,7 @@ export class ValidationProvider {
           severity: DiagnosticSeverity.Information,
           range: definition.range,
           message: `${definition.type} '${name}' should follow naming convention`,
-          source: 'mspec'
+          source: 'mspec',
         });
       }
     }
@@ -98,7 +94,7 @@ export class ValidationProvider {
 
   private isTypeUsed(typeName: string, analysisResult: AnalysisResult): boolean {
     // Check if the type is referenced anywhere
-    for (const [node, symbol] of analysisResult.fieldReferences) {
+    for (const [, symbol] of analysisResult.fieldReferences) {
       if (symbol.name === typeName && symbol.type === 'type') {
         return true;
       }
@@ -106,7 +102,7 @@ export class ValidationProvider {
     return false;
   }
 
-  private getDefinitionName(definition: any): string | null {
+  private getDefinitionName(definition: ComplexTypeDefinition): string | null {
     switch (definition.type) {
       case 'TypeDefinition':
       case 'DiscriminatedTypeDefinition':
@@ -125,11 +121,11 @@ export class ValidationProvider {
       case 'DataIoDefinition':
         // Types should start with uppercase
         return /^[A-Z][a-zA-Z0-9]*$/.test(name);
-      
+
       case 'EnumDefinition':
         // Enums should start with uppercase
         return /^[A-Z][a-zA-Z0-9]*$/.test(name);
-      
+
       default:
         return true;
     }

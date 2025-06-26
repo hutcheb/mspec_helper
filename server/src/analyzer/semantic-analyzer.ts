@@ -5,18 +5,17 @@
 
 import {
   ASTNode,
-  MSpecFile,
+  CaseStatement,
   ComplexTypeDefinition,
-  TypeDefinition,
+  DataIoDefinition,
   DiscriminatedTypeDefinition,
   EnumDefinition,
-  DataIoDefinition,
-  FieldDefinition,
-  TypeReference,
-  ComplexTypeReference,
-  SimpleTypeReference,
   Expression,
-  VariableLiteral
+  FieldDefinition,
+  MSpecFile,
+  TypeDefinition,
+  TypeReference,
+  VariableLiteral,
 } from '../types/mspec-types';
 
 export interface Symbol {
@@ -29,7 +28,7 @@ export interface Symbol {
 export interface SymbolScope {
   name: string;
   parent?: SymbolScope;
-  symbols: Map<string, Symbol>;
+  symbols: Map<string, symbol>;
   children: SymbolScope[];
 }
 
@@ -43,7 +42,7 @@ export interface AnalysisResult {
   symbolTable: SymbolScope;
   errors: SemanticError[];
   typeDefinitions: Map<string, ComplexTypeDefinition>;
-  fieldReferences: Map<ASTNode, Symbol>;
+  fieldReferences: Map<ASTNode, symbol>;
 }
 
 export class SemanticAnalyzer {
@@ -51,23 +50,23 @@ export class SemanticAnalyzer {
   private currentScope: SymbolScope;
   private errors: SemanticError[] = [];
   private typeDefinitions: Map<string, ComplexTypeDefinition> = new Map();
-  private fieldReferences: Map<ASTNode, Symbol> = new Map();
+  private fieldReferences: Map<ASTNode, symbol> = new Map();
 
   constructor() {
     this.globalScope = {
       name: 'global',
       symbols: new Map(),
-      children: []
+      children: [],
     };
     this.currentScope = this.globalScope;
   }
 
   public analyze(ast: MSpecFile): AnalysisResult {
     this.reset();
-    
+
     // First pass: collect all type definitions
     this.collectTypeDefinitions(ast);
-    
+
     // Second pass: analyze each type definition
     for (const definition of ast.definitions) {
       this.analyzeTypeDefinition(definition);
@@ -77,7 +76,7 @@ export class SemanticAnalyzer {
       symbolTable: this.globalScope,
       errors: this.errors,
       typeDefinitions: this.typeDefinitions,
-      fieldReferences: this.fieldReferences
+      fieldReferences: this.fieldReferences,
     };
   }
 
@@ -85,7 +84,7 @@ export class SemanticAnalyzer {
     this.globalScope = {
       name: 'global',
       symbols: new Map(),
-      children: []
+      children: [],
     };
     this.currentScope = this.globalScope;
     this.errors = [];
@@ -121,7 +120,9 @@ export class SemanticAnalyzer {
 
   private analyzeTypeDefinition(definition: ComplexTypeDefinition): void {
     const name = this.getDefinitionName(definition);
-    if (!name) return;
+    if (!name) {
+      return;
+    }
 
     // Create a new scope for this type
     const typeScope = this.createChildScope(name);
@@ -172,11 +173,11 @@ export class SemanticAnalyzer {
     // Analyze enum values
     for (const enumValue of definition.values) {
       this.addSymbol(enumValue.name, 'enumValue', enumValue);
-      
+
       if (enumValue.valueExpression) {
         this.analyzeExpression(enumValue.valueExpression);
       }
-      
+
       if (enumValue.constantValues) {
         for (const constValue of enumValue.constantValues) {
           this.analyzeExpression(constValue);
@@ -204,19 +205,19 @@ export class SemanticAnalyzer {
         this.addSymbol(field.name, 'field', field);
         this.analyzeTypeReference(field.dataType);
         break;
-      
+
       case 'ArrayField':
         this.addSymbol(field.name, 'field', field);
         this.analyzeTypeReference(field.dataType);
         this.analyzeExpression(field.loopExpression);
         break;
-      
+
       case 'ConstField':
         this.addSymbol(field.name, 'field', field);
         this.analyzeTypeReference(field.dataType);
         this.analyzeExpression(field.expectedValue);
         break;
-      
+
       case 'OptionalField':
         this.addSymbol(field.name, 'field', field);
         this.analyzeTypeReference(field.dataType);
@@ -224,23 +225,23 @@ export class SemanticAnalyzer {
           this.analyzeExpression(field.condition);
         }
         break;
-      
+
       case 'DiscriminatorField':
         this.addSymbol(field.name, 'field', field);
         this.analyzeTypeReference(field.dataType);
         break;
-      
+
       case 'ImplicitField':
         this.addSymbol(field.name, 'field', field);
         this.analyzeExpression(field.serializeExpression);
         break;
-      
+
       case 'VirtualField':
         this.addSymbol(field.name, 'field', field);
         this.analyzeTypeReference(field.dataType);
         this.analyzeExpression(field.valueExpression);
         break;
-      
+
       case 'ManualField':
         this.addSymbol(field.name, 'field', field);
         this.analyzeTypeReference(field.dataType);
@@ -248,7 +249,7 @@ export class SemanticAnalyzer {
         this.analyzeExpression(field.serializeExpression);
         this.analyzeExpression(field.lengthExpression);
         break;
-      
+
       case 'ManualArrayField':
         this.addSymbol(field.name, 'field', field);
         this.analyzeTypeReference(field.dataType);
@@ -257,28 +258,28 @@ export class SemanticAnalyzer {
         this.analyzeExpression(field.serializeExpression);
         this.analyzeExpression(field.lengthExpression);
         break;
-      
+
       case 'ChecksumField':
         this.addSymbol(field.name, 'field', field);
         this.analyzeExpression(field.checksumExpression);
         break;
-      
+
       case 'PaddingField':
         this.addSymbol(field.name, 'field', field);
         this.analyzeExpression(field.paddingValue);
         this.analyzeExpression(field.timesPadding);
         break;
-      
+
       case 'AssertField':
         this.addSymbol(field.name, 'field', field);
         this.analyzeTypeReference(field.dataType);
         this.analyzeExpression(field.condition);
         break;
-      
+
       case 'ValidationField':
         this.analyzeExpression(field.validationExpression);
         break;
-      
+
       case 'PeekField':
         this.addSymbol(field.name, 'field', field);
         this.analyzeTypeReference(field.dataType);
@@ -286,17 +287,17 @@ export class SemanticAnalyzer {
           this.analyzeExpression(field.offset);
         }
         break;
-      
+
       case 'EnumField':
         this.addSymbol(field.name, 'field', field);
         this.analyzeTypeReference(field.dataType);
         break;
-      
+
       case 'AbstractField':
         this.addSymbol(field.name, 'field', field);
         this.analyzeTypeReference(field.dataType);
         break;
-      
+
       case 'TypeSwitchField':
         for (const discriminator of field.discriminators) {
           this.analyzeExpression(discriminator);
@@ -305,18 +306,18 @@ export class SemanticAnalyzer {
           this.analyzeCaseStatement(caseStmt);
         }
         break;
-      
+
       case 'ReservedField':
         this.analyzeExpression(field.expectedValue);
         break;
-      
+
       case 'UnknownField':
         // No additional analysis needed
         break;
     }
   }
 
-  private analyzeCaseStatement(caseStmt: any): void {
+  private analyzeCaseStatement(caseStmt: CaseStatement): void {
     // Create scope for case statement
     const caseScope = this.createChildScope(`case_${caseStmt.name}`);
     this.enterScope(caseScope);
@@ -350,7 +351,7 @@ export class SemanticAnalyzer {
     if (typeRef.type === 'ComplexTypeReference') {
       const typeName = typeRef.name;
       const symbol = this.resolveSymbol(typeName);
-      
+
       if (!symbol) {
         this.addError(`Undefined type: ${typeName}`, typeRef, 'error');
       } else if (symbol.type !== 'type') {
@@ -374,41 +375,41 @@ export class SemanticAnalyzer {
       case 'VariableLiteral':
         this.analyzeVariableLiteral(expr);
         break;
-      
+
       case 'BinaryExpression':
         this.analyzeExpression(expr.left);
         this.analyzeExpression(expr.right);
         break;
-      
+
       case 'TernaryExpression':
         this.analyzeExpression(expr.condition);
         this.analyzeExpression(expr.trueExpression);
         this.analyzeExpression(expr.falseExpression);
         break;
-      
+
       case 'UnaryExpression':
         this.analyzeExpression(expr.operand);
         break;
-      
+
       case 'FunctionCall':
         for (const arg of expr.arguments) {
           this.analyzeExpression(arg);
         }
         break;
-      
+
       case 'ArrayAccess':
         this.analyzeExpression(expr.array);
         this.analyzeExpression(expr.index);
         break;
-      
+
       case 'FieldAccess':
         this.analyzeExpression(expr.object);
         break;
-      
+
       case 'ParenthesizedExpression':
         this.analyzeExpression(expr.expression);
         break;
-      
+
       case 'ValueLiteral':
         // No additional analysis needed for literals
         break;
@@ -417,7 +418,7 @@ export class SemanticAnalyzer {
 
   private analyzeVariableLiteral(expr: VariableLiteral): void {
     const symbol = this.resolveSymbol(expr.name);
-    
+
     if (!symbol) {
       this.addError(`Undefined variable: ${expr.name}`, expr, 'error');
     } else {
@@ -431,19 +432,19 @@ export class SemanticAnalyzer {
       return;
     }
 
-    const symbol: Symbol = {
+    const symbol: symbol = {
       name,
       type,
       definition,
-      scope: this.currentScope
+      scope: this.currentScope,
     };
 
     this.currentScope.symbols.set(name, symbol);
   }
 
-  private resolveSymbol(name: string): Symbol | null {
+  private resolveSymbol(name: string): symbol | null {
     let scope: SymbolScope | undefined = this.currentScope;
-    
+
     while (scope) {
       const symbol = scope.symbols.get(name);
       if (symbol) {
@@ -451,7 +452,7 @@ export class SemanticAnalyzer {
       }
       scope = scope.parent;
     }
-    
+
     return null;
   }
 
@@ -460,9 +461,9 @@ export class SemanticAnalyzer {
       name,
       parent: this.currentScope,
       symbols: new Map(),
-      children: []
+      children: [],
     };
-    
+
     this.currentScope.children.push(childScope);
     return childScope;
   }
@@ -481,7 +482,7 @@ export class SemanticAnalyzer {
     this.errors.push({
       message,
       node,
-      severity
+      severity,
     });
   }
 }

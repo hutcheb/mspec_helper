@@ -244,7 +244,7 @@ describe('MSpec Lexer', () => {
         TokenType.IDENTIFIER, // messageType
         TokenType.RIGHT_BRACKET,
         TokenType.RIGHT_BRACKET,
-        TokenType.EOF
+        TokenType.EOF,
       ];
       
       expect(tokens.map(t => t.type)).toEqual(expectedTypes);

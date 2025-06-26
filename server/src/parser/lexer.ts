@@ -190,7 +190,7 @@ export class Lexer {
     }
 
     const start = this.position;
-    const startPos = this.getCurrentPosition();
+    // const startPos = this.getCurrentPosition(); // Unused variable
     const char = this.advance();
 
     // Single character tokens
@@ -397,19 +397,25 @@ export class Lexer {
   }
 
   private advance(): string {
-    if (this.isAtEnd()) return '\0';
+    if (this.isAtEnd()) {
+      return '\0';
+    }
     const char = this.text[this.position++];
     this.column++;
     return char;
   }
 
   private peek(): string {
-    if (this.isAtEnd()) return '\0';
+    if (this.isAtEnd()) {
+      return '\0';
+    }
     return this.text[this.position];
   }
 
   private peekNext(): string {
-    if (this.position + 1 >= this.text.length) return '\0';
+    if (this.position + 1 >= this.text.length) {
+      return '\0';
+    }
     return this.text[this.position + 1];
   }
 

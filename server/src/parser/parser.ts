@@ -47,7 +47,7 @@ import { Token, TokenType } from './lexer';
 export class ParseError extends Error {
   constructor(
     message: string,
-    public token: Token
+    public token: Token,
   ) {
     super(message);
     this.name = 'ParseError';
@@ -494,7 +494,7 @@ export class MSpecParser {
   }
 
   private parseTernary(): Expression {
-    let expr = this.parseLogicalOr();
+    const expr = this.parseLogicalOr();
 
     if (this.match(TokenType.QUESTION)) {
       const trueExpr = this.parseExpression();
@@ -575,7 +575,7 @@ export class MSpecParser {
         TokenType.GREATER_THAN,
         TokenType.LESS_THAN,
         TokenType.GREATER_EQUAL,
-        TokenType.LESS_EQUAL
+        TokenType.LESS_EQUAL,
       )
     ) {
       const operator = this.previous().value as BinaryOperator;
@@ -646,6 +646,7 @@ export class MSpecParser {
   private parsePostfix(): Expression {
     let expr = this.parsePrimary();
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       if (this.match(TokenType.DOT)) {
         const field = this.consumeIdentifier('Expected field name after "."');
@@ -677,6 +678,7 @@ export class MSpecParser {
     // to avoid conflicts with typeSwitch case syntax
     let expr = this.parsePrimary();
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       if (this.match(TokenType.DOT)) {
         const field = this.consumeIdentifier('Expected field name after "."');
@@ -1125,6 +1127,7 @@ export class MSpecParser {
     const cases: CaseStatement[] = [];
 
     // Parse case statements
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       // Skip comments and whitespace
       this.skipWhitespaceAndComments();
@@ -1280,12 +1283,16 @@ export class MSpecParser {
   }
 
   private check(type: TokenType): boolean {
-    if (this.isAtEnd()) return false;
+    if (this.isAtEnd()) {
+      return false;
+    }
     return this.peek().type === type;
   }
 
   private advance(): Token {
-    if (!this.isAtEnd()) this.current++;
+    if (!this.isAtEnd()) {
+      this.current++;
+    }
     return this.previous();
   }
 
@@ -1298,7 +1305,9 @@ export class MSpecParser {
   }
 
   private peekNext(): Token | undefined {
-    if (this.current + 1 >= this.tokens.length) return undefined;
+    if (this.current + 1 >= this.tokens.length) {
+      return undefined;
+    }
     return this.tokens[this.current + 1];
   }
 
@@ -1307,7 +1316,9 @@ export class MSpecParser {
   }
 
   private consume(type: TokenType, message: string): Token {
-    if (this.check(type)) return this.advance();
+    if (this.check(type)) {
+      return this.advance();
+    }
     throw new ParseError(message, this.peek());
   }
 
@@ -1351,9 +1362,15 @@ export class MSpecParser {
   }
 
   private parseArrayLoopType(): ArrayLoopType {
-    if (this.match(TokenType.COUNT)) return 'count';
-    if (this.match(TokenType.LENGTH)) return 'length';
-    if (this.match(TokenType.TERMINATED)) return 'terminated';
+    if (this.match(TokenType.COUNT)) {
+      return 'count';
+    }
+    if (this.match(TokenType.LENGTH)) {
+      return 'length';
+    }
+    if (this.match(TokenType.TERMINATED)) {
+      return 'terminated';
+    }
 
     // Also handle as identifiers in case they weren't tokenized as keywords
     if (this.check(TokenType.IDENTIFIER)) {

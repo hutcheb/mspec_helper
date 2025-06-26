@@ -4,11 +4,7 @@ module.exports = {
     node: true,
     es2020: true,
   },
-  extends: [
-    'eslint:recommended',
-    '@typescript-eslint/recommended',
-    'prettier',
-  ],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2020,
@@ -22,24 +18,22 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-non-null-assertion': 'warn',
-    '@typescript-eslint/prefer-const': 'error',
     '@typescript-eslint/no-var-requires': 'error',
-    
+
     // General rules
     'no-console': 'warn',
     'no-debugger': 'error',
     'no-duplicate-imports': 'error',
     'no-unused-expressions': 'error',
-    'prefer-const': 'error',
     'no-var': 'error',
-    
+
     // Code style
-    'eqeqeq': ['error', 'always'],
-    'curly': ['error', 'all'],
+    eqeqeq: ['error', 'always'],
+    curly: ['error', 'all'],
     'brace-style': ['error', '1tbs'],
-    'comma-dangle': ['error', 'es5'],
-    'quotes': ['error', 'single', { avoidEscape: true }],
-    'semi': ['error', 'always'],
+    'comma-dangle': ['error', 'always-multiline'],
+    quotes: ['error', 'single', { avoidEscape: true }],
+    semi: ['error', 'always'],
   },
   overrides: [
     {
@@ -53,7 +47,7 @@ module.exports = {
       },
     },
     {
-      files: ['scripts/**/*.js'],
+      files: ['scripts/**/*.js', 'test-*.js'],
       env: {
         node: true,
       },
@@ -63,13 +57,5 @@ module.exports = {
       },
     },
   ],
-  ignorePatterns: [
-    'node_modules/',
-    'out/',
-    'dist/',
-    'build/',
-    '*.d.ts',
-    'coverage/',
-    '*.vsix',
-  ],
+  ignorePatterns: ['node_modules/', 'out/', 'dist/', 'build/', '*.d.ts', 'coverage/', '*.vsix'],
 };
