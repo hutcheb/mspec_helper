@@ -1,7 +1,7 @@
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.9.20"
-    id("org.jetbrains.intellij") version "1.17.0"
+    id("org.jetbrains.intellij") version "1.17.4"
 }
 
 group = "com.yourorg.mspec"
@@ -19,7 +19,7 @@ dependencies {
 
 // Configure Gradle IntelliJ Plugin
 intellij {
-    version.set("2024.1.4")
+    version.set("2025.1.2")
     type.set("IC") // Target IDE Platform
 
     plugins.set(listOf(
@@ -39,8 +39,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("241")
-        untilBuild.set("243.*")
+        sinceBuild.set("251")
+        untilBuild.set("253.*")
     }
 
     signPlugin {

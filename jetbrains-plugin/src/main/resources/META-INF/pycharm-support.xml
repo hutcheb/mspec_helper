@@ -1,0 +1,23 @@
+<idea-plugin>
+    <!-- PyCharm-specific extensions for MSpec language support -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Python-specific MSpec integration -->
+        <configurationType implementation="com.yourorg.mspec.python.MSpecPythonRunConfigurationType"/>
+        
+        <!-- Python MSpec file template -->
+        <fileTemplateGroup implementation="com.yourorg.mspec.python.MSpecPythonFileTemplateProvider"/>
+        
+        <!-- Integration with Python project structure -->
+        <projectStructureDetector implementation="com.yourorg.mspec.python.MSpecPythonProjectStructureDetector"/>
+    </extensions>
+    
+    <actions>
+        <!-- PyCharm-specific actions -->
+        <action id="MSpec.Python.GenerateBindings" 
+                class="com.yourorg.mspec.python.actions.GeneratePythonBindingsAction" 
+                text="Generate Python Bindings from MSpec" 
+                description="Generate Python bindings from MSpec definitions">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>

@@ -32,6 +32,8 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
+    <!-- Optional dependency for PyCharm support (available since 2025.1.2) -->
+    <depends optional="true" config-file="pycharm-support.xml">com.intellij.modules.python</depends>
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
@@ -88,9 +90,9 @@
             language="MSpec" 
             implementationClass="com.yourorg.mspec.annotator.MSpecAnnotator"/>
 
-        <!-- Language Server Protocol Support - Disabled until LSP APIs are available -->
-        <!-- <platform.lsp.serverSupportProvider
-            implementation="com.yourorg.mspec.lsp.MSpecLspServerSupportProvider"/> -->
+        <!-- Language Server Protocol Support -->
+        <platform.lsp.serverSupportProvider
+            implementation="com.yourorg.mspec.lsp.MSpecLspServerSupportProvider"/>
 
         <!-- Live Templates -->
         <defaultLiveTemplates file="/liveTemplates/MSpec.xml"/>
