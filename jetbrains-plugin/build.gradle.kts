@@ -24,6 +24,9 @@ dependencies {
         bundledPlugin("com.intellij.java")
         bundledPlugin("org.jetbrains.kotlin")
 
+        // LSP support plugin (required for LSP API)
+        bundledPlugin("com.intellij.platform.lsp")
+
         // Plugin verifier for compatibility testing
         pluginVerifier()
 

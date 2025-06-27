@@ -129,6 +129,8 @@ vscode-extension/*.vsix
 # JetBrains Plugin specific
 jetbrains-plugin/build/
 jetbrains-plugin/.gradle/
+jetbrains-plugin/.intellijPlatform/
+jetbrains-plugin/.kotlin/
 jetbrains-plugin/gradle/
 jetbrains-plugin/.idea/
 jetbrains-plugin/*.iml

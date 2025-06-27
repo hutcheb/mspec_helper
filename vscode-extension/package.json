@@ -3,7 +3,7 @@
   "displayName": "MSpec Language Support",
   "description": "Language support for PLC4X MSpec files",
   "version": "1.0.0",
-  "publisher": "Ben Hutcheson",
+  "publisher": "hutcheb",
   "engines": {
     "vscode": "^1.75.0"
   },
