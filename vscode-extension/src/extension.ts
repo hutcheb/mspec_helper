@@ -2,8 +2,9 @@
  * VSCode extension for MSpec language support
  */
 
+import * as fs from 'fs';
 import * as path from 'path';
-import { workspace, ExtensionContext, window, commands, OutputChannel } from 'vscode';
+import { commands, ExtensionContext, OutputChannel, window, workspace } from 'vscode';
 
 import {
   LanguageClient,
@@ -38,9 +39,17 @@ export function deactivate(): Thenable<void> | undefined {
 
 function startLanguageServer(context: ExtensionContext) {
   // The server is implemented in node
-  const serverModule = context.asAbsolutePath(
-    path.join('..', 'server', 'out', 'server.js'),
-  );
+  const serverModule = context.asAbsolutePath(path.join('server', 'server-bundled.js'));
+
+  // Check if server file exists
+  if (!fs.existsSync(serverModule)) {
+    const errorMsg = `Language server not found at: ${serverModule}`;
+    outputChannel.appendLine(errorMsg);
+    window.showErrorMessage(errorMsg);
+    return;
+  }
+
+  outputChannel.appendLine(`Using language server: ${serverModule}`);
 
   // Check if user has specified a custom server path
   const config = workspace.getConfiguration('mspec');
@@ -77,6 +86,21 @@ function startLanguageServer(context: ExtensionContext) {
     },
     outputChannel: outputChannel,
     traceOutputChannel: outputChannel,
+    // Enable all LSP features
+    initializationOptions: {},
+    middleware: {
+      // Add middleware to log requests for debugging
+      provideDefinition: (document, position, token, next) => {
+        outputChannel.appendLine(
+          `Go to definition requested at ${position.line}:${position.character}`
+        );
+        return next(document, position, token);
+      },
+      provideDocumentFormattingEdits: (document, options, token, next) => {
+        outputChannel.appendLine('Document formatting requested');
+        return next(document, options, token);
+      },
+    },
   };
 
   // Create the language client and start the client.
@@ -84,16 +108,33 @@ function startLanguageServer(context: ExtensionContext) {
     'mspecLanguageServer',
     'MSpec Language Server',
     serverOptions,
-    clientOptions,
+    clientOptions
   );
 
   // Start the client. This will also launch the server
-  client.start().then(() => {
-    outputChannel.appendLine('MSpec Language Server started successfully');
-  }).catch((error) => {
-    outputChannel.appendLine(`Failed to start MSpec Language Server: ${error}`);
-    window.showErrorMessage(`Failed to start MSpec Language Server: ${error}`);
-  });
+  client
+    .start()
+    .then(() => {
+      outputChannel.appendLine('MSpec Language Server started successfully');
+
+      // Log server capabilities for debugging
+      setTimeout(() => {
+        const capabilities = client.initializeResult?.capabilities;
+        if (capabilities) {
+          outputChannel.appendLine('Server capabilities:');
+          outputChannel.appendLine(`- Definition Provider: ${!!capabilities.definitionProvider}`);
+          outputChannel.appendLine(
+            `- Formatting Provider: ${!!capabilities.documentFormattingProvider}`
+          );
+          outputChannel.appendLine(`- Completion Provider: ${!!capabilities.completionProvider}`);
+          outputChannel.appendLine(`- Hover Provider: ${!!capabilities.hoverProvider}`);
+        }
+      }, 1000);
+    })
+    .catch(error => {
+      outputChannel.appendLine(`Failed to start MSpec Language Server: ${error}`);
+      window.showErrorMessage(`Failed to start MSpec Language Server: ${error}`);
+    });
 }
 
 function registerCommands(context: ExtensionContext) {
@@ -112,11 +153,34 @@ function registerCommands(context: ExtensionContext) {
     outputChannel.show();
   });
 
-  context.subscriptions.push(restartServerCommand, showOutputCommand);
+  // Command for go to definition
+  const goToDefinitionCommand = commands.registerCommand('mspec.goToDefinition', async () => {
+    if (client && client.isRunning()) {
+      await commands.executeCommand('editor.action.revealDefinition');
+    } else {
+      window.showWarningMessage('MSpec Language Server is not running');
+    }
+  });
+
+  // Command for format document
+  const formatDocumentCommand = commands.registerCommand('mspec.formatDocument', async () => {
+    if (client && client.isRunning()) {
+      await commands.executeCommand('editor.action.formatDocument');
+    } else {
+      window.showWarningMessage('MSpec Language Server is not running');
+    }
+  });
+
+  context.subscriptions.push(
+    restartServerCommand,
+    showOutputCommand,
+    goToDefinitionCommand,
+    formatDocumentCommand
+  );
 }
 
 // Handle configuration changes
-workspace.onDidChangeConfiguration((event) => {
+workspace.onDidChangeConfiguration(event => {
   if (event.affectsConfiguration('mspec')) {
     // Restart the server when configuration changes
     commands.executeCommand('mspec.restartServer');

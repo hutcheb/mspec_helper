@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#357ABD;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded rectangle background -->
+  <rect width="16" height="16" fill="url(#bgGradient)" rx="2" ry="2"/>
+
+  <!-- Protocol/specification symbol - stylized brackets with content -->
+  <g fill="white" opacity="0.9">
+    <!-- Left bracket -->
+    <path d="M3 4 L3 12 L4 12 L4 5 L5 5 L5 4 Z"/>
+    <!-- Right bracket -->
+    <path d="M13 4 L13 12 L12 12 L12 5 L11 5 L11 4 Z"/>
+    <!-- Center content representing structured data -->
+    <rect x="6" y="6" width="4" height="1" rx="0.5"/>
+    <rect x="6" y="8" width="3" height="1" rx="0.5"/>
+    <rect x="6" y="10" width="4" height="1" rx="0.5"/>
+  </g>
+</svg>

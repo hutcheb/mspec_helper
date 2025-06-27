@@ -16,6 +16,11 @@
     ['0x03' ERROR]
 ]
 
+[discriminatedType RequestMessage
+    [simple uint 16 requestId]
+    [simple string 32 command]
+]
+
 [discriminatedType ProtocolMessage byteOrder='BIG_ENDIAN'
     [discriminator uint 8 messageType]
     [typeSwitch messageType

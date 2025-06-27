@@ -114,6 +114,16 @@
         "command": "mspec.showOutputChannel",
         "title": "Show MSpec Output",
         "category": "MSpec"
+      },
+      {
+        "command": "mspec.goToDefinition",
+        "title": "Go to Definition",
+        "category": "MSpec"
+      },
+      {
+        "command": "mspec.formatDocument",
+        "title": "Format Document",
+        "category": "MSpec"
       }
     ],
     "menus": {
@@ -125,6 +135,26 @@
         {
           "command": "mspec.showOutputChannel",
           "when": "editorLangId == mspec"
+        },
+        {
+          "command": "mspec.goToDefinition",
+          "when": "editorLangId == mspec"
+        },
+        {
+          "command": "mspec.formatDocument",
+          "when": "editorLangId == mspec"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "mspec.goToDefinition",
+          "when": "editorLangId == mspec",
+          "group": "navigation"
+        },
+        {
+          "command": "mspec.formatDocument",
+          "when": "editorLangId == mspec",
+          "group": "1_modification"
         }
       ]
     },
@@ -135,9 +165,6 @@
       }
     ]
   },
-  "activationEvents": [
-    "onLanguage:mspec"
-  ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "build": "npm run compile",
@@ -146,7 +173,8 @@
     "pretest": "npm run compile",
     "test": "echo 'VSCode extension tests not implemented yet'",
     "package": "vsce package",
-    "publish": "vsce publish"
+    "publish": "vsce publish",
+    "build-full": "pwsh -ExecutionPolicy Bypass -File build-extension.ps1"
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1"
