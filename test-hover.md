@@ -53,7 +53,11 @@
 
 ## Debugging steps:
 
-1. Enable verbose logging:
+1. **Check extension installation**:
+   - Verify the extension appears in the Extensions list
+   - Check that the extension is enabled (not disabled)
+
+2. **Enable verbose logging**:
 
    ```json
    {
@@ -61,12 +65,39 @@
    }
    ```
 
-2. Check server capabilities in the output:
-   - Should show "Hover Provider: true"
+3. **Check server startup**:
+   - Look for "MSpec Language Server started successfully" in output
+   - Look for "MSpec Language Server initialized successfully"
+   - Should show "Hover Provider: true" in capabilities
 
-3. Look for hover request logs:
-   - "Hover requested at line:character"
+4. **Test language recognition**:
+   - File should show "MSpec" in the language mode indicator
+   - Syntax highlighting should be active
+
+5. **Look for hover request logs**:
+   - "Hover requested at line:character" (from extension)
+   - "Hover request received for..." (from server)
+   - "HoverProvider: Processing hover at..." (from hover provider)
    - "Hover response received" or "No hover response"
 
-4. Check for parsing errors:
+6. **Check for errors**:
    - Any lexer or parser errors in the output
+   - Server startup errors
+   - File not found errors for server-bundled.js
+
+## Potential fixes:
+
+1. **If no hover requests are logged**:
+   - Extension may not be properly activated
+   - Language server may not be running
+   - File may not be recognized as MSpec
+
+2. **If hover requests reach server but no response**:
+   - Check for parsing errors
+   - Verify word detection is working
+   - Check symbol analysis
+
+3. **If server doesn't start**:
+   - Check if server-bundled.js exists in the extension
+   - Verify Node.js is available
+   - Check for permission issues
