@@ -1,6 +1,22 @@
 # MSpec Language Support for JetBrains IDEs
 
-This plugin provides language support for PLC4X MSpec files in JetBrains IDEs (IntelliJ IDEA, PyCharm, WebStorm, etc.).
+<!-- Plugin description -->
+
+Language support for PLC4X MSpec files in IntelliJ IDEA and other JetBrains
+IDEs.
+
+Features: • Syntax highlighting for MSpec files • Code completion and
+auto-completion • Error detection and validation • Go to definition and find
+usages • Code formatting and structure view • Integration with MSpec Language
+Server Protocol
+
+MSpec is a domain-specific language used by Apache PLC4X to define protocol
+message structures for industrial communication protocols.
+
+<!-- Plugin description end -->
+
+This plugin provides language support for PLC4X MSpec files in JetBrains IDEs
+(IntelliJ IDEA, PyCharm, WebStorm, etc.).
 
 ## Features
 
@@ -16,7 +32,8 @@ This plugin provides language support for PLC4X MSpec files in JetBrains IDEs (I
 ### From Plugin Package (Manual Installation)
 
 1. **Download the Plugin Package**
-   - Download the latest `jetbrains-plugin-*.zip` file from the [GitHub Releases](https://github.com/your-org/mspec-helper/releases)
+   - Download the latest `jetbrains-plugin-*.zip` file from the
+     [GitHub Releases](https://github.com/your-org/mspec-helper/releases)
    - Or build it locally using: `./gradlew buildPlugin`
 
 2. **Install in JetBrains IDE**
@@ -34,7 +51,8 @@ This plugin provides language support for PLC4X MSpec files in JetBrains IDEs (I
 
 ### From JetBrains Marketplace (Future)
 
-*Note: This plugin is not yet published to the JetBrains Marketplace. Use manual installation for now.*
+_Note: This plugin is not yet published to the JetBrains Marketplace. Use manual
+installation for now._
 
 ## Building from Source
 
@@ -72,7 +90,8 @@ cd mspec-helper/jetbrains-plugin
 
 ## Configuration
 
-Currently, the plugin works out of the box with default settings. Future versions will include:
+Currently, the plugin works out of the box with default settings. Future
+versions will include:
 
 - Language server integration settings
 - Custom syntax highlighting themes
@@ -126,10 +145,12 @@ This plugin is compatible with:
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE)
+file for details.
 
 ## Support
 
-- GitHub Issues: [Report bugs and feature requests](https://github.com/your-org/mspec-helper/issues)
+- GitHub Issues:
+  [Report bugs and feature requests](https://github.com/your-org/mspec-helper/issues)
 - Documentation: [Project Wiki](https://github.com/your-org/mspec-helper/wiki)
 - PLC4X Community: [Apache PLC4X](https://plc4x.apache.org/)
