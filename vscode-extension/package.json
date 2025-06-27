@@ -3,7 +3,7 @@
   "displayName": "MSpec Language Support",
   "description": "Language support for PLC4X MSpec files",
   "version": "1.0.0",
-  "publisher": "your-publisher",
+  "publisher": "Ben Hutcheson",
   "engines": {
     "vscode": "^1.75.0"
   },
@@ -196,11 +196,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/mspec-lsp.git"
+    "url": "https://github.com/hutcheb/mspec_helper.git"
   },
   "bugs": {
-    "url": "https://github.com/your-org/mspec-lsp/issues"
+    "url": "https://github.com/hutcheb/mspec_helper/issues"
   },
-  "homepage": "https://github.com/your-org/mspec-lsp#readme",
+  "homepage": "https://github.com/hutcheb/mspec_helper#readme",
   "license": "Apache-2.0"
 }
