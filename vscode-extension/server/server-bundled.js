@@ -10017,23 +10017,30 @@ var require_hover = __commonJS({
     var node_12 = require_node3();
     var HoverProvider = class {
       provideHover(document, position, ast, analysisResult) {
+        console.log(`HoverProvider: Processing hover at ${position.line}:${position.character}`);
         const wordRange = this.getWordRangeAtPosition(document, position);
         if (!wordRange) {
+          console.log("HoverProvider: No word range found at position");
           return null;
         }
         const word = document.getText(wordRange);
+        console.log(`HoverProvider: Found word "${word}" at position`);
         const symbol = this.findSymbolAtPosition(analysisResult, wordRange, word);
         if (symbol) {
+          console.log(`HoverProvider: Found symbol "${symbol.name}" of type "${symbol.type}"`);
           return this.createSymbolHover(symbol, wordRange);
         }
         const keywordHover = this.createKeywordHover(word, wordRange);
         if (keywordHover) {
+          console.log(`HoverProvider: Found keyword "${word}"`);
           return keywordHover;
         }
         const dataTypeHover = this.createDataTypeHover(word, wordRange);
         if (dataTypeHover) {
+          console.log(`HoverProvider: Found data type "${word}"`);
           return dataTypeHover;
         }
+        console.log(`HoverProvider: No hover information found for "${word}"`);
         return null;
       }
       getWordRangeAtPosition(document, position) {
@@ -12025,6 +12032,8 @@ connection.onInitialize((params) => {
   return result;
 });
 connection.onInitialized(() => {
+  connection.console.log("MSpec Language Server initialized successfully");
+  connection.console.log(`Hover provider enabled: ${!!connection.onHover}`);
   if (hasConfigurationCapability) {
     connection.client.register(node_1.DidChangeConfigurationNotification.type, void 0);
   }
@@ -12131,8 +12140,10 @@ connection.onCompletionResolve((item) => {
   return completionProvider.resolveCompletion(item);
 });
 connection.onHover(async (params) => {
+  connection.console.log(`Hover request received for ${params.textDocument.uri} at ${params.position.line}:${params.position.character}`);
   const document = documents.get(params.textDocument.uri);
   if (!document) {
+    connection.console.log("Document not found for hover request");
     return null;
   }
   const text = document.getText();
@@ -12141,7 +12152,13 @@ connection.onHover(async (params) => {
   try {
     const ast = parser.parse(tokens);
     const analysisResult = semanticAnalyzer.analyze(ast);
-    return hoverProvider.provideHover(document, params.position, ast, analysisResult);
+    const result = hoverProvider.provideHover(document, params.position, ast, analysisResult);
+    if (result) {
+      connection.console.log(`Hover result: ${JSON.stringify(result.contents)}`);
+    } else {
+      connection.console.log("No hover result returned");
+    }
+    return result;
   } catch (error) {
     connection.console.error(`Hover error: ${error}`);
     return null;
@@ -12241,5 +12258,6 @@ connection.onNotification((method, _params) => {
   }
 });
 documents.listen(connection);
+connection.console.log("MSpec Language Server starting to listen for requests...");
 connection.listen();
 connection.console.log("MSpec Language Server started");

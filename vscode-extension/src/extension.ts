@@ -100,6 +100,16 @@ function startLanguageServer(context: ExtensionContext) {
         outputChannel.appendLine('Document formatting requested');
         return next(document, options, token);
       },
+      provideHover: (document, position, token, next) => {
+        outputChannel.appendLine(`Hover requested at ${position.line}:${position.character}`);
+        const result = next(document, position, token);
+        if (result) {
+          outputChannel.appendLine('Hover response received');
+        } else {
+          outputChannel.appendLine('No hover response');
+        }
+        return result;
+      },
     },
   };
 

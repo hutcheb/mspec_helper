@@ -12,38 +12,42 @@ export class HoverProvider {
     document: TextDocument,
     position: Position,
     ast: MSpecFile,
-    analysisResult: AnalysisResult,
+    analysisResult: AnalysisResult
   ): Hover | null {
-    // Note: offset and text variables removed as they were unused
-    // const offset = document.offsetAt(position);
-    // const text = document.getText();
+    console.log(`HoverProvider: Processing hover at ${position.line}:${position.character}`);
 
     // Find the word at the cursor position
     const wordRange = this.getWordRangeAtPosition(document, position);
     if (!wordRange) {
+      console.log('HoverProvider: No word range found at position');
       return null;
     }
 
     const word = document.getText(wordRange);
+    console.log(`HoverProvider: Found word "${word}" at position`);
 
     // Check if it's a symbol reference
     const symbol = this.findSymbolAtPosition(analysisResult, wordRange, word);
     if (symbol) {
+      console.log(`HoverProvider: Found symbol "${symbol.name}" of type "${symbol.type}"`);
       return this.createSymbolHover(symbol, wordRange);
     }
 
     // Check if it's a keyword
     const keywordHover = this.createKeywordHover(word, wordRange);
     if (keywordHover) {
+      console.log(`HoverProvider: Found keyword "${word}"`);
       return keywordHover;
     }
 
     // Check if it's a data type
     const dataTypeHover = this.createDataTypeHover(word, wordRange);
     if (dataTypeHover) {
+      console.log(`HoverProvider: Found data type "${word}"`);
       return dataTypeHover;
     }
 
+    console.log(`HoverProvider: No hover information found for "${word}"`);
     return null;
   }
 
@@ -79,7 +83,7 @@ export class HoverProvider {
   private findSymbolAtPosition(
     analysisResult: AnalysisResult,
     range: Range,
-    word: string,
+    word: string
   ): MSpecSymbol | null {
     // Look for the symbol in the symbol table
     return this.findSymbolInScope(analysisResult.symbolTable, word);

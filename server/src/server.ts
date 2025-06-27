@@ -97,6 +97,9 @@ connection.onInitialize((params: InitializeParams) => {
 });
 
 connection.onInitialized(() => {
+  connection.console.log('MSpec Language Server initialized successfully');
+  connection.console.log(`Hover provider enabled: ${!!connection.onHover}`);
+
   if (hasConfigurationCapability) {
     // Register for all configuration changes
     connection.client.register(DidChangeConfigurationNotification.type, undefined);
@@ -242,7 +245,7 @@ connection.onCompletion(async (params: TextDocumentPositionParams): Promise<Comp
       params.position,
       ast,
       analysisResult,
-      settings,
+      settings
     );
   } catch (error) {
     connection.console.error(`Completion error: ${error}`);
@@ -257,8 +260,13 @@ connection.onCompletionResolve((item: CompletionItem): CompletionItem => {
 
 // Hover handler
 connection.onHover(async (params: HoverParams): Promise<Hover | null> => {
+  connection.console.log(
+    `Hover request received for ${params.textDocument.uri} at ${params.position.line}:${params.position.character}`
+  );
+
   const document = documents.get(params.textDocument.uri);
   if (!document) {
+    connection.console.log('Document not found for hover request');
     return null;
   }
 
@@ -270,7 +278,15 @@ connection.onHover(async (params: HoverParams): Promise<Hover | null> => {
     const ast = parser.parse(tokens);
     const analysisResult = semanticAnalyzer.analyze(ast);
 
-    return hoverProvider.provideHover(document, params.position, ast, analysisResult);
+    const result = hoverProvider.provideHover(document, params.position, ast, analysisResult);
+
+    if (result) {
+      connection.console.log(`Hover result: ${JSON.stringify(result.contents)}`);
+    } else {
+      connection.console.log('No hover result returned');
+    }
+
+    return result;
   } catch (error) {
     connection.console.error(`Hover error: ${error}`);
     return null;
@@ -416,6 +432,7 @@ connection.onNotification((method, _params) => {
 documents.listen(connection);
 
 // Listen on the connection
+connection.console.log('MSpec Language Server starting to listen for requests...');
 connection.listen();
 
 connection.console.log('MSpec Language Server started');
