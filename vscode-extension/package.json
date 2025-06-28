@@ -2,7 +2,7 @@
   "name": "mspec-language-support",
   "displayName": "MSpec Language Support",
   "description": "Language support for PLC4X MSpec files",
-  "version": "1.0.0",
+  "version": "0.1.0-alpha",
   "publisher": "hutcheb",
   "engines": {
     "vscode": "^1.75.0"

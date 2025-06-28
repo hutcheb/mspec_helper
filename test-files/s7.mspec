@@ -87,6 +87,9 @@
         ['0xE0' COTPParameterDisconnectAdditionalInformation
             [array byte data count 'rest']
         ]
+        ['0x00' COTPParameterUnknown
+            [array byte data count 'rest']
+        ]
     ]
 ]
 

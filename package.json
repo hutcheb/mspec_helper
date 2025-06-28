@@ -1,6 +1,6 @@
 {
   "name": "mspec-lsp-workspace",
-  "version": "1.0.0",
+  "version": "0.1.0-alpha",
   "description": "Language Server Protocol implementation for PLC4X MSpec files",
   "private": true,
   "workspaces": [

@@ -1,16 +1,25 @@
 # Changelog
 
-All notable changes to the MSpec Language Server project will be documented in this file.
+All notable changes to the MSpec Language Server project will be documented in
+this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+and this project adheres to
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
 ### Added
+
+- Planned features for future releases
+
+## [0.1.0-alpha] - 2025-06-28
+
+### Added
+
 - Initial implementation of MSpec Language Server Protocol
 - VSCode extension with comprehensive language support
-- JetBrains plugin for IntelliJ IDEA and other JetBrains IDEs
+- JetBrains plugin foundation for IntelliJ IDEA and other JetBrains IDEs
 - Complete MSpec grammar support based on PLC4X ANTLR4 grammar
 - Syntax highlighting for all MSpec constructs
 - Auto-completion with context-aware suggestions
@@ -26,7 +35,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build automation with GitHub Actions
 - Cross-platform support (Windows, macOS, Linux)
 
+### Known Issues
+
+- JetBrains plugin requires additional LSP dependencies (will be addressed in
+  future releases)
+- Some advanced language features may be incomplete in this alpha release
+
 ### Language Server Features
+
 - **Lexer**: Complete tokenization of MSpec syntax
 - **Parser**: Recursive descent parser with error recovery
 - **Semantic Analysis**: Symbol table management and type checking
@@ -37,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Formatting Provider**: Automatic code formatting
 
 ### VSCode Extension Features
+
 - **Syntax Highlighting**: TextMate grammar for MSpec files
 - **Language Configuration**: Bracket matching, auto-closing pairs
 - **Code Snippets**: Pre-defined snippets for common patterns
@@ -45,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **File Association**: Automatic detection of .mspec files
 
 ### JetBrains Plugin Features
+
 - **File Type Support**: Recognition of .mspec files
 - **LSP Integration**: Communication with MSpec language server
 - **Syntax Highlighting**: Native IntelliJ syntax highlighting
@@ -53,6 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Plugin Configuration**: Settings for server path and options
 
 ### Documentation
+
 - Comprehensive README with installation and usage instructions
 - Installation guide for all platforms
 - Contributing guidelines for developers
@@ -60,6 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Example MSpec files for testing and learning
 
 ### Build and Development
+
 - Multi-platform build scripts (Bash and PowerShell)
 - GitHub Actions CI/CD pipeline
 - Automated testing and linting
@@ -70,6 +90,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - TBD
 
 ### Added
+
 - Initial stable release
 - Full MSpec language support
 - VSCode and JetBrains extensions
@@ -83,19 +104,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### [Version] - Date
 
 #### Added
+
 - New features and capabilities
 
 #### Changed
+
 - Changes to existing functionality
 
 #### Deprecated
+
 - Features that will be removed in future versions
 
 #### Removed
+
 - Features that have been removed
 
 #### Fixed
+
 - Bug fixes and corrections
 
 #### Security
+
 - Security-related changes and fixes
