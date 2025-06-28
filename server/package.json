@@ -1,6 +1,6 @@
 {
   "name": "mspec-language-server",
-  "version": "0.1.0-alpha",
+  "version": "0.1.0-beta",
   "description": "Language Server for PLC4X MSpec files",
   "main": "out/server.js",
   "scripts": {

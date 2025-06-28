@@ -13,6 +13,27 @@ and this project adheres to
 
 - Planned features for future releases
 
+## [0.1.0-beta] - 2025-06-28
+
+### Added
+
+- Enhanced error handling and stability improvements
+- Better release automation and CI/CD pipeline
+- Improved documentation and troubleshooting guides
+- Manual release scripts for backup deployment
+
+### Changed
+
+- Updated from alpha to beta release status
+- Refined GitHub Actions workflow with proper permissions
+- Enhanced release process with better error handling
+
+### Fixed
+
+- Resolved GitHub release creation permissions issues
+- Fixed CI/CD pipeline 403 errors
+- Improved build stability and reliability
+
 ## [0.1.0-alpha] - 2025-06-28
 
 ### Added

@@ -11,21 +11,22 @@
     <vendor email="support@yourorg.com" url="https://www.yourorg.com">Your Organization</vendor>
 
     <!-- Plugin version -->
-    <version>0.1.0-alpha</version>
+    <version>0.1.0-beta</version>
 
     <!-- Change notes for this release -->
     <change-notes><![CDATA[
-    <h3>0.1.0-alpha - Initial Alpha Release</h3>
+    <h3>0.1.0-beta - Beta Release</h3>
     <ul>
-        <li>Initial implementation of MSpec language support</li>
-        <li>Basic syntax highlighting for MSpec files</li>
+        <li>Improved MSpec language support implementation</li>
+        <li>Enhanced syntax highlighting for MSpec files</li>
         <li>File type recognition for .mspec files</li>
         <li>Language Server Protocol integration foundation</li>
         <li>Support for IntelliJ IDEA, PyCharm, and other JetBrains IDEs</li>
-        <li>Basic project structure and extension points</li>
+        <li>Refined project structure and extension points</li>
+        <li>Better error handling and stability improvements</li>
     </ul>
 
-    <p><strong>Note:</strong> This is an alpha release. Some features may be incomplete or experimental.</p>
+    <p><strong>Note:</strong> This is a beta release. Most core features are stable but some advanced features may still be in development.</p>
     ]]></change-notes>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.

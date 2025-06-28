@@ -9,6 +9,13 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: write
+  packages: write
+  actions: read
+  checks: write
+  pull-requests: write
+
 env:
   NODE_VERSION: '18.x'
   JAVA_VERSION: '17'
@@ -274,5 +281,7 @@ jobs:
           body: ${{ steps.changelog.outputs.changelog }}
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}
+          fail_on_unmatched_files: true
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
